@@ -3,15 +3,16 @@
 //           out:  {type:"ready"} | {type:"action", actionIdx, action, value}
 
 // The wasm-only bundle: the default "onnxruntime-web" entry includes the
-// WebGPU (jsep) backend and fetches ort-wasm-simd-threaded.jsep.mjs, which
-// we don't ship in public/ort/. This one loads the plain wasm runtime.
+// WebGPU (jsep) backend and fetches a jsep loader we don't ship.
 import * as ort from "onnxruntime-web/wasm";
+import wasmUrl from "@ort-wasm?url";
 import type { Action, Observation } from "../engine/types";
 import { GeneralsBot, ortSessionLike } from "./infer";
 
-// onnxruntime-web downloads its WASM binaries at runtime; they are copied
-// into public/ort/ and served under the vite base path (/generals/ in prod).
-ort.env.wasm.wasmPaths = `${import.meta.env.BASE_URL}ort/`;
+// Hand the wasm binary to ort through Vite's asset pipeline (?url) — a plain
+// path prefix breaks in dev (Vite refuses dynamic imports from /public, and
+// dep pre-bundling breaks the bundle's own import.meta.url resolution).
+ort.env.wasm.wasmPaths = { wasm: wasmUrl };
 
 export type WorkerRequest =
   | { type: "init"; modelUrl: string }
