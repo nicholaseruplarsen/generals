@@ -1,4 +1,5 @@
-// Canvas board renderer — generals.io look: ~48px tiles, player colours, fog.
+// Canvas board renderer, styled after official generals.io: light tiles on a
+// dark fog panel, azure/red players, drawn mountain/city/crown glyphs.
 // Human mode renders a fogged Observation (never the true state); bot-vs-bot
 // spectator mode renders the full GameState.
 
@@ -19,21 +20,25 @@ export interface BoardOverlay {
   queue: readonly QueuedMove[];
 }
 
-const COLOR_BG = "#0b0e13";
-const COLOR_NEUTRAL = "#4b5563";
-const COLOR_PLAYER: readonly [string, string] = ["#4363d8", "#e6194b"];
-const COLOR_MOUNTAIN = "#242a33";
-const COLOR_MOUNTAIN_GLYPH = "#7d8794";
-const COLOR_FOG = "#151a21";
-const COLOR_FOG_GLYPH = "#3d4654";
-const COLOR_CITY = "rgba(255, 255, 255, 0.92)";
-const COLOR_CROWN = "#ffd54a";
+// Palette sampled from official generals.io.
+const COLOR_EMPTY = "#dcdcdc"; //   visible unowned ground
+const COLOR_NEUTRAL_CITY = "#949494";
+const COLOR_MOUNTAIN_TILE = "#bbbbbb";
+const COLOR_PLAYER: readonly [string, string] = ["#4a87f0", "#ee342f"];
+const COLOR_FOG = "#3a3a3a"; //     fog ground = the dark panel itself
+const COLOR_GLYPH = "#1c1c1c"; //   glyphs on visible tiles
+const COLOR_GLYPH_FOG = "#141414"; // obstacle glyphs inside fog
+const COLOR_GRID_LIGHT = "rgba(0, 0, 0, 0.28)";
+const COLOR_GRID_FOG = "rgba(0, 0, 0, 0.18)";
 const COLOR_TEXT = "#ffffff";
 const COLOR_ARROW = "rgba(255, 255, 255, 0.95)";
 const COLOR_ARROW_SPLIT = "#ffd166";
 
+const FONT = "Quicksand, 'Trebuchet MS', system-ui, sans-serif";
+
 interface CellInfo {
   fill: string;
+  visible: boolean;
   /** Mountain or city hidden in fog — both drawn with the identical glyph. */
   fogObstacle: boolean;
   mountain: boolean;
@@ -42,12 +47,9 @@ interface CellInfo {
   army: number;
 }
 
-function fillFor(owner: -1 | 0 | 1): string {
-  return owner === -1 ? COLOR_NEUTRAL : COLOR_PLAYER[owner];
-}
-
 const EMPTY_CELL: CellInfo = {
   fill: COLOR_FOG,
+  visible: false,
   fogObstacle: false,
   mountain: false,
   city: false,
@@ -59,14 +61,16 @@ function cellFromObs(obs: Observation, i: number): CellInfo {
   if (obs.fogCells[i] === 1) return EMPTY_CELL;
   if (obs.structuresInFog[i] === 1) return { ...EMPTY_CELL, fogObstacle: true };
   if (obs.mountains[i] === 1) {
-    return { ...EMPTY_CELL, fill: COLOR_MOUNTAIN, mountain: true };
+    return { ...EMPTY_CELL, visible: true, fill: COLOR_MOUNTAIN_TILE, mountain: true };
   }
   const owner = obs.ownedCells[i] === 1 ? 0 : obs.opponentCells[i] === 1 ? 1 : -1;
+  const city = obs.cities[i] === 1;
   return {
-    fill: fillFor(owner),
+    fill: owner === -1 ? (city ? COLOR_NEUTRAL_CITY : COLOR_EMPTY) : COLOR_PLAYER[owner],
+    visible: true,
     fogObstacle: false,
     mountain: false,
-    city: obs.cities[i] === 1,
+    city,
     general: obs.generals[i] === 1,
     army: obs.armies[i]!,
   };
@@ -74,14 +78,16 @@ function cellFromObs(obs: Observation, i: number): CellInfo {
 
 function cellFromState(s: GameState, i: number): CellInfo {
   if (s.mountains[i] === 1) {
-    return { ...EMPTY_CELL, fill: COLOR_MOUNTAIN, mountain: true };
+    return { ...EMPTY_CELL, visible: true, fill: COLOR_MOUNTAIN_TILE, mountain: true };
   }
   const owner = s.owner0[i] === 1 ? 0 : s.owner1[i] === 1 ? 1 : -1;
+  const city = s.cities[i] === 1;
   return {
-    fill: fillFor(owner),
+    fill: owner === -1 ? (city ? COLOR_NEUTRAL_CITY : COLOR_EMPTY) : COLOR_PLAYER[owner],
+    visible: true,
     fogObstacle: false,
     mountain: false,
-    city: s.cities[i] === 1,
+    city,
     general: s.generals[i] === 1,
     army: s.armies[i]!,
   };
@@ -102,18 +108,54 @@ function ctx2d(canvas: HTMLCanvasElement): CanvasRenderingContext2D {
   return ctx;
 }
 
-function drawTriangle(
-  ctx: CanvasRenderingContext2D,
-  cx: number,
-  cy: number,
-  size: number,
-  color: string,
-): void {
+/** Official-style double-peak mountain (stroked polyline). */
+function drawMountain(ctx: CanvasRenderingContext2D, cx: number, cy: number, color: string): void {
+  const s = TILE * 0.42;
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = 2.5;
+  ctx.lineJoin = "round";
+  ctx.beginPath();
+  ctx.moveTo(cx - s * 0.95, cy + s * 0.55);
+  ctx.lineTo(cx - s * 0.35, cy - s * 0.5);
+  ctx.lineTo(cx + s * 0.05, cy + s * 0.05);
+  ctx.lineTo(cx + s * 0.35, cy - s * 0.25);
+  ctx.lineTo(cx + s * 0.95, cy + s * 0.55);
+  ctx.stroke();
+}
+
+/** Little castle tower, like the official city icon. */
+function drawCity(ctx: CanvasRenderingContext2D, cx: number, cy: number, color: string): void {
+  const w = TILE * 0.42;
+  const h = TILE * 0.4;
+  const x = cx - w / 2;
+  const y = cy - h / 2;
+  ctx.fillStyle = color;
+  // battlement: three merlons
+  const mw = w / 5;
+  ctx.fillRect(x, y, mw, h * 0.3);
+  ctx.fillRect(x + 2 * mw, y, mw, h * 0.3);
+  ctx.fillRect(x + 4 * mw, y, mw, h * 0.3);
+  // body + door notch
+  ctx.fillRect(x, y + h * 0.22, w, h * 0.78);
+  ctx.clearRect(cx - w * 0.12, y + h * 0.62, w * 0.24, h * 0.38);
+}
+
+/** Three-spike crown for generals. */
+function drawCrown(ctx: CanvasRenderingContext2D, cx: number, cy: number, color: string): void {
+  const w = TILE * 0.62;
+  const h = TILE * 0.48;
+  const x = cx - w / 2;
+  const base = cy + h / 2;
   ctx.fillStyle = color;
   ctx.beginPath();
-  ctx.moveTo(cx, cy - size);
-  ctx.lineTo(cx - size * 0.95, cy + size * 0.8);
-  ctx.lineTo(cx + size * 0.95, cy + size * 0.8);
+  ctx.moveTo(x, base);
+  ctx.lineTo(x, base - h * 0.55);
+  ctx.lineTo(x + w * 0.25, base - h * 0.3);
+  ctx.lineTo(x + w * 0.5, base - h);
+  ctx.lineTo(x + w * 0.75, base - h * 0.3);
+  ctx.lineTo(x + w, base - h * 0.55);
+  ctx.lineTo(x + w, base);
   ctx.closePath();
   ctx.fill();
 }
@@ -130,8 +172,8 @@ function drawText(
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillStyle = color;
-  ctx.shadowColor = "rgba(0, 0, 0, 0.55)";
-  ctx.shadowBlur = 3;
+  ctx.shadowColor = "rgba(0, 0, 0, 0.75)";
+  ctx.shadowBlur = 2;
   ctx.shadowOffsetY = 1;
   ctx.fillText(text, x, y);
   ctx.shadowColor = "transparent";
@@ -171,7 +213,7 @@ function drawArrow(ctx: CanvasRenderingContext2D, m: QueuedMove, alpha: number):
     const mx = (sx + ex) / 2 - (ey - sy) * 0.35;
     const my = (sy + ey) / 2 + (ex - sx) * 0.35;
     ctx.fillStyle = color;
-    ctx.font = "700 11px system-ui, sans-serif";
+    ctx.font = `700 11px ${FONT}`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText("½", mx, my);
@@ -186,7 +228,7 @@ export function drawBoard(
   now: number,
 ): void {
   const ctx = ctx2d(canvas);
-  ctx.fillStyle = COLOR_BG;
+  ctx.fillStyle = COLOR_FOG;
   ctx.fillRect(0, 0, W * TILE, H * TILE);
 
   const cells: CellInfo[] = new Array<CellInfo>(H * W);
@@ -195,17 +237,19 @@ export function drawBoard(
       const i = r * W + c;
       const cell = view.kind === "obs" ? cellFromObs(view.obs, i) : cellFromState(view.state, i);
       cells[i] = cell;
-      ctx.fillStyle = cell.fill;
-      ctx.fillRect(c * TILE + 1, r * TILE + 1, TILE - 2, TILE - 2);
-      if (cell.fogObstacle || cell.mountain) {
-        drawTriangle(
-          ctx,
-          c * TILE + TILE / 2,
-          r * TILE + TILE / 2,
-          9,
-          cell.fogObstacle ? COLOR_FOG_GLYPH : COLOR_MOUNTAIN_GLYPH,
-        );
+      if (cell.fill !== COLOR_FOG) {
+        ctx.fillStyle = cell.fill;
+        ctx.fillRect(c * TILE, r * TILE, TILE, TILE);
       }
+      // thin grid, lighter inside fog like the official board
+      ctx.strokeStyle = cell.visible ? COLOR_GRID_LIGHT : COLOR_GRID_FOG;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(c * TILE + 0.5, r * TILE + 0.5, TILE - 1, TILE - 1);
+
+      const cx = c * TILE + TILE / 2;
+      const cy = r * TILE + TILE / 2;
+      if (cell.fogObstacle) drawMountain(ctx, cx, cy, COLOR_GLYPH_FOG);
+      else if (cell.mountain) drawMountain(ctx, cx, cy, COLOR_GLYPH);
     }
   }
 
@@ -213,25 +257,17 @@ export function drawBoard(
   // next move to execute (queue front) is drawn brighter.
   overlay.queue.forEach((m, order) => drawArrow(ctx, m, order === 0 ? 1 : 0.55));
 
-  // Glyphs + army counts.
+  // Structure glyphs + army counts.
   for (let r = 0; r < H; r++) {
     for (let c = 0; c < W; c++) {
       const cell = cells[r * W + c]!;
       if (cell.mountain || cell.fogObstacle) continue;
       const cx = c * TILE + TILE / 2;
-      const hasGlyph = cell.city || cell.general;
-      if (cell.city) {
-        ctx.fillStyle = COLOR_CITY;
-        ctx.beginPath();
-        ctx.arc(cx, r * TILE + 15, 7, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      if (cell.general) {
-        drawText(ctx, "♛", cx, r * TILE + 14, "16px 'Segoe UI Symbol', serif", COLOR_CROWN);
-      }
+      const cy = r * TILE + TILE / 2;
+      if (cell.city) drawCity(ctx, cx, cy, COLOR_GLYPH);
+      if (cell.general) drawCrown(ctx, cx, cy, "rgba(0, 0, 0, 0.55)");
       if (cell.army > 0) {
-        const cy = hasGlyph ? r * TILE + TILE * 0.7 : r * TILE + TILE / 2;
-        drawText(ctx, String(cell.army), cx, cy, "700 16px system-ui, sans-serif", COLOR_TEXT);
+        drawText(ctx, String(cell.army), cx, cy, `700 15px ${FONT}`, COLOR_TEXT);
       }
     }
   }
@@ -243,6 +279,6 @@ export function drawBoard(
     const pulse = 0.7 + 0.3 * Math.sin(now / 160);
     ctx.strokeStyle = `rgba(255, 255, 255, ${pulse.toFixed(3)})`;
     ctx.lineWidth = 3;
-    ctx.strokeRect(sc * TILE + 2.5, sr * TILE + 2.5, TILE - 5, TILE - 5);
+    ctx.strokeRect(sc * TILE + 1.5, sr * TILE + 1.5, TILE - 3, TILE - 3);
   }
 }

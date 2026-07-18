@@ -133,6 +133,7 @@ class App {
 
   private readonly canvas: HTMLCanvasElement;
   private readonly turnEl: HTMLElement;
+  private readonly nameEls: [HTMLElement, HTMLElement];
   private readonly armyEls: [HTMLElement, HTMLElement];
   private readonly landEls: [HTMLElement, HTMLElement];
   private readonly statusEl: HTMLElement;
@@ -151,42 +152,42 @@ class App {
 
   constructor(root: HTMLElement) {
     root.innerHTML = `
-      <header class="bar">
-        <div class="brand">generals</div>
-        <div class="scoreboard">
-          <span class="chip p0" title="army / land"><i></i><span id="p0-army">1</span><span class="sep">/</span><span class="land" id="p0-land">1</span></span>
-          <span class="turn" id="turn">turn 0</span>
-          <span class="chip p1" title="army / land"><i></i><span id="p1-army">1</span><span class="sep">/</span><span class="land" id="p1-land">1</span></span>
+      <div class="turnbox" id="turn">Turn 0</div>
+      <table class="leaderboard" title="army / land">
+        <thead><tr><th>Player</th><th>Army</th><th>Land</th></tr></thead>
+        <tbody>
+          <tr><td class="name p0" id="p0-name">you</td><td id="p0-army">1</td><td id="p0-land">1</td></tr>
+          <tr><td class="name p1" id="p1-name">champion</td><td id="p1-army">1</td><td id="p1-land">1</td></tr>
+        </tbody>
+      </table>
+      <header class="topbar">
+        <select id="mode" title="Game mode">
+          <option value="human">Play vs bot</option>
+          <option value="bots">Bot vs bot</option>
+        </select>
+        <div class="ctl seg" id="human-ctl">
+          <button data-speed="1" class="active">1x</button>
+          <button data-speed="2">2x</button>
+          <button data-speed="5">5x</button>
         </div>
-        <div class="controls">
-          <select id="mode" title="Game mode">
-            <option value="human">Play vs bot</option>
-            <option value="bots">Bot vs bot</option>
+        <div class="ctl" id="bots-ctl" hidden>
+          <button id="pause">Pause</button>
+          <button id="step" disabled>Step</button>
+          <input id="tps" type="range" min="1" max="20" value="8" title="Ticks per second" />
+          <span class="tps" id="tps-label">8 t/s</span>
+          <select id="model0" title="Blue (P0) model">
+            <option value="champion" selected>P0: champion</option>
+            <option value="spatial-v5">P0: spatial-v5</option>
           </select>
-          <div class="ctl seg" id="human-ctl">
-            <button data-speed="1" class="active">×1</button>
-            <button data-speed="2">×2</button>
-            <button data-speed="5">×5</button>
-          </div>
-          <div class="ctl" id="bots-ctl" hidden>
-            <button id="pause">Pause</button>
-            <button id="step" disabled>Step</button>
-            <input id="tps" type="range" min="1" max="20" value="8" title="Ticks per second" />
-            <span class="tps" id="tps-label">8 t/s</span>
-            <select id="model0" title="Blue (P0) model">
-              <option value="champion" selected>P0: champion</option>
-              <option value="spatial-v5">P0: spatial-v5</option>
-            </select>
-            <select id="model1" title="Red (P1) model">
-              <option value="champion">P1: champion</option>
-              <option value="spatial-v5" selected>P1: spatial-v5</option>
-            </select>
-          </div>
-          <div class="ctl">
-            <input id="seed" type="number" min="0" step="1" title="Map seed" />
-            <button id="rand" title="Random seed">🎲</button>
-            <button id="newgame" class="primary">New game</button>
-          </div>
+          <select id="model1" title="Red (P1) model">
+            <option value="champion">P1: champion</option>
+            <option value="spatial-v5" selected>P1: spatial-v5</option>
+          </select>
+        </div>
+        <div class="ctl">
+          <input id="seed" type="number" min="0" step="1" title="Map seed" />
+          <button id="rand" title="Random seed">🎲</button>
+          <button id="newgame" class="primary">New game</button>
         </div>
       </header>
       <main class="stage">
@@ -206,6 +207,7 @@ class App {
 
     this.canvas = el(root, "#board");
     this.turnEl = el(root, "#turn");
+    this.nameEls = [el(root, "#p0-name"), el(root, "#p1-name")];
     this.armyEls = [el(root, "#p0-army"), el(root, "#p1-army")];
     this.landEls = [el(root, "#p0-land"), el(root, "#p1-land")];
     this.statusEl = el(root, "#status");
@@ -252,6 +254,9 @@ class App {
     this.seedInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") this.newGame(this.parseSeed());
     });
+
+    // Preload the display font so canvas army counts render with it.
+    document.fonts?.load("700 15px Quicksand").catch(() => {});
 
     this.applyModeUi();
     this.newGame(this.session.seed);
@@ -457,7 +462,12 @@ class App {
       now,
     );
 
-    this.setText(this.turnEl, "turn", `turn ${this.session.turn}`);
+    this.setText(this.turnEl, "turn", `Turn ${this.session.turn}`);
+    const names: [string, string] = human
+      ? ["you", "champion"]
+      : [this.modelKeys[0], this.modelKeys[1]];
+    this.setText(this.nameEls[0], "n0", names[0]);
+    this.setText(this.nameEls[1], "n1", names[1]);
     let army: [number, number];
     let land: [number, number];
     if (obs) {
