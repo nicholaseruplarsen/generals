@@ -190,21 +190,32 @@ canvas {
 /* ---- game-over overlay ---- */
 
 .overlay {
+  /* Floating dialog — the final board stays visible and interactive-looking
+     behind it; only the card itself captures clicks. */
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.66);
+  background: none;
+  pointer-events: none;
 }
 
 .card {
+  pointer-events: auto;
   text-align: center;
-  background: var(--bg);
+  background: rgba(34, 34, 34, 0.96);
   border: 1px solid var(--line);
   border-radius: 2px;
-  padding: 26px 38px;
+  padding: 20px 30px;
   line-height: 1.4;
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.55);
+}
+
+.cardrow {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
 }
 
 .winner {
@@ -224,6 +235,72 @@ canvas {
 .card .sub {
   color: #cfcfcf;
   margin-bottom: 18px;
+}
+
+/* ---- embed mode (?embed=1, for blog iframes) ---- */
+
+.hudrow {
+  display: contents; /* fullscreen: children position themselves (fixed) */
+}
+
+.embed .hudrow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 8px 8px 0;
+}
+
+.embed .turnbox,
+.embed .leaderboard {
+  position: static;
+}
+
+.embed .turnbox {
+  padding: 5px 10px;
+  font-size: 14px;
+}
+
+.embed .leaderboard {
+  font-size: 12px;
+}
+
+.embed .leaderboard th,
+.embed .leaderboard td {
+  padding: 3px 9px;
+}
+
+.embed .topbar,
+.embed .hint,
+.embed .status {
+  display: none;
+}
+
+.embed .stage {
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 8px 8px 12px;
+}
+
+.embed canvas {
+  width: min(96vw, 560px);
+}
+
+.embedbar {
+  gap: 8px;
+}
+
+.embedbar a.fullscreen {
+  color: #fff;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 7px 12px;
+  text-decoration: none;
+}
+
+.embedbar a.fullscreen:hover {
+  color: var(--teal-bright);
+  border-color: var(--teal-bright);
 }
 
 /* ---- footer text ---- */

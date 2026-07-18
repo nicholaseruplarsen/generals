@@ -83,6 +83,19 @@ export class HumanInput {
       this.session.clearQueue(this.player);
       return;
     }
+    if (key === "e") {
+      // Undo the last queued move; the anchor steps back with it.
+      const undone = this.session.popQueue(this.player);
+      if (undone) {
+        const rest = this.session.queueOf(this.player);
+        const last = rest[rest.length - 1];
+        const d = last ? DIRECTIONS[last.dir]! : null;
+        this.anchor = last && d
+          ? (last.row + d[0]) * W + (last.col + d[1])
+          : undone.row * W + undone.col;
+      }
+      return;
+    }
     const dir = KEY_DIRS[key];
     if (dir === undefined) return;
     e.preventDefault(); // keep arrow keys from scrolling the page

@@ -50,6 +50,18 @@ export class GameSession {
     return getObservation(this.state, player);
   }
 
+  /**
+   * State to render: once the game ends, the winning step has already
+   * transferred every loser cell to the winner (engine semantics), which
+   * reads as an instant reset. Show the last pre-capture frame instead.
+   */
+  viewState(): GameState {
+    if (this.done && this.history.length > 0) {
+      return this.history[this.history.length - 1]!;
+    }
+    return this.state;
+  }
+
   step(actions: [Action, Action]): StepInfo {
     this.history.push(this.state);
     if (this.history.length > HISTORY_CAP) {
@@ -73,17 +85,22 @@ export class GameSession {
     this.queues[player].length = 0;
   }
 
+  /** Remove and return the most recently queued move (E = undo). */
+  popQueue(player: 0 | 1): QueuedMove | undefined {
+    return this.queues[player].pop();
+  }
+
   queueOf(player: 0 | 1): readonly QueuedMove[] {
     return this.queues[player];
   }
 
   /** Full-map totals for the spectator HUD. Human mode uses obs counts instead. */
-  totals(): { army: [number, number]; land: [number, number] } {
+  totals(state: GameState = this.state): { army: [number, number]; land: [number, number] } {
     let a0 = 0;
     let a1 = 0;
     let l0 = 0;
     let l1 = 0;
-    const { armies, owner0, owner1 } = this.state;
+    const { armies, owner0, owner1 } = state;
     for (let i = 0; i < armies.length; i++) {
       if (owner0[i] === 1) {
         a0 += armies[i]!;

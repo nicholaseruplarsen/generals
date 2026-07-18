@@ -26,8 +26,8 @@ function randomSeed(): number {
 }
 
 const HUMAN_HINT =
-  "Click one of your tiles, then queue moves with arrow keys / WASD — the cursor follows the queue. " +
-  "Hold Z for a 50% split, Q clears the queue.";
+  "Queue moves with arrow keys / WASD — the cursor follows the queue; click any of your tiles to re-anchor. " +
+  "Hold Z for a 50% split, E undoes the last move, Q clears the queue.";
 const BOTS_HINT = "Spectating bot vs bot — full map, no fog. Pick a model per seat, pause and step through ticks.";
 
 /**
@@ -121,6 +121,7 @@ export function mountApp(root: HTMLElement): void {
 
 class App {
   private mode: Mode = "human";
+  private readonly embed: boolean;
   private session: GameSession = new GameSession(randomSeed());
   private input: HumanInput | null = null;
   private seats: [BotSeat | null, BotSeat | null] = [null, null];
@@ -151,15 +152,23 @@ class App {
   private readonly modelSelects: [HTMLSelectElement, HTMLSelectElement];
 
   constructor(root: HTMLElement) {
+    // ?embed=1 — compact chrome for iframes (blog posts); ?mode=bots — start
+    // in spectator mode.
+    const params = new URLSearchParams(window.location.search);
+    this.embed = params.has("embed");
+    if (params.get("mode") === "bots") this.mode = "bots";
+
     root.innerHTML = `
-      <div class="turnbox" id="turn">Turn 0</div>
-      <table class="leaderboard" title="army / land">
-        <thead><tr><th>Player</th><th>Army</th><th>Land</th></tr></thead>
-        <tbody>
-          <tr><td class="name p0" id="p0-name">you</td><td id="p0-army">1</td><td id="p0-land">1</td></tr>
-          <tr><td class="name p1" id="p1-name">champion</td><td id="p1-army">1</td><td id="p1-land">1</td></tr>
-        </tbody>
-      </table>
+      <div class="hudrow">
+        <div class="turnbox" id="turn">Turn 0</div>
+        <table class="leaderboard" title="army / land">
+          <thead><tr><th>Player</th><th>Army</th><th>Land</th></tr></thead>
+          <tbody>
+            <tr><td class="name p0" id="p0-name">you</td><td id="p0-army">1</td><td id="p0-land">1</td></tr>
+            <tr><td class="name p1" id="p1-name">champion</td><td id="p1-army">1</td><td id="p1-land">1</td></tr>
+          </tbody>
+        </table>
+      </div>
       <header class="topbar">
         <select id="mode" title="Game mode">
           <option value="human">Play vs bot</option>
@@ -197,9 +206,17 @@ class App {
             <div class="card">
               <div class="winner" id="winner-text"></div>
               <div class="sub" id="winner-sub"></div>
-              <button id="rematch" class="primary">Rematch</button>
+              <div class="cardrow">
+                <button id="rematch" class="primary">New game</button>
+                <button id="viewboard">View board</button>
+              </div>
             </div>
           </div>
+        </div>
+        <div class="ctl embedbar" id="embedbar" hidden>
+          <button id="embed-pause">Pause</button>
+          <button id="embed-new">New game</button>
+          <a id="embed-full" class="fullscreen" target="_blank" rel="noopener">⛶ Fullscreen</a>
         </div>
         <div class="hint" id="hint"></div>
         <div class="status" id="status"></div>
@@ -251,13 +268,31 @@ class App {
     el<HTMLButtonElement>(root, "#rematch").addEventListener("click", () =>
       this.newGame(randomSeed()),
     );
+    el<HTMLButtonElement>(root, "#viewboard").addEventListener("click", () => {
+      this.overlayEl.hidden = true;
+    });
     this.seedInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") this.newGame(this.parseSeed());
     });
 
+    if (this.embed) {
+      root.classList.add("embed");
+      const bar = el<HTMLElement>(root, "#embedbar");
+      bar.hidden = false;
+      el<HTMLButtonElement>(root, "#embed-pause").addEventListener("click", () =>
+        this.togglePause(),
+      );
+      el<HTMLButtonElement>(root, "#embed-new").addEventListener("click", () =>
+        this.newGame(randomSeed()),
+      );
+      const full = el<HTMLAnchorElement>(root, "#embed-full");
+      full.href = window.location.origin + window.location.pathname;
+    }
+
     // Preload the display font so canvas army counts render with it.
     document.fonts?.load("700 15px Quicksand").catch(() => {});
 
+    el<HTMLSelectElement>(root, "#mode").value = this.mode;
     this.applyModeUi();
     this.newGame(this.session.seed);
     requestAnimationFrame(this.frame);
@@ -308,8 +343,11 @@ class App {
   }
 
   private updatePauseUi(): void {
-    this.pauseBtn.textContent = this.running ? "Pause" : "Resume";
+    const label = this.running ? "Pause" : "Resume";
+    this.pauseBtn.textContent = label;
     this.stepBtn.disabled = this.running;
+    const embedPause = document.querySelector<HTMLButtonElement>("#embed-pause");
+    if (embedPause) embedPause.textContent = label;
   }
 
   private parseSeed(): number {
@@ -332,6 +370,9 @@ class App {
       this.ensureSeat(1, "champion");
       this.input = new HumanInput(this.session, this.canvas);
       this.input.attach();
+      // Start with the general selected — no first click needed.
+      const gp = this.session.state.generalPositions;
+      this.input.anchor = gp[0] * 10 + gp[1];
     } else {
       this.ensureSeat(0, this.modelKeys[0]);
       this.ensureSeat(1, this.modelKeys[1]);
@@ -449,15 +490,19 @@ class App {
 
   private draw(now: number): void {
     const human = this.mode === "human";
-    // Human mode renders strictly through the fogged observation.
-    const obs = human ? this.session.obs(0) : null;
-    const view: BoardView = obs ? { kind: "obs", obs } : { kind: "state", state: this.session.state };
+    const done = this.session.done;
+    // Human mode renders strictly through the fogged observation; once the
+    // game is over the fog lifts and the final pre-capture frame is shown.
+    const obs = human && !done ? this.session.obs(0) : null;
+    const view: BoardView = obs
+      ? { kind: "obs", obs }
+      : { kind: "state", state: this.session.viewState() };
     drawBoard(
       this.canvas,
       view,
       {
-        selected: human ? (this.input?.anchor ?? null) : null,
-        queue: human ? this.session.queueOf(0) : [],
+        selected: human && !done ? (this.input?.anchor ?? null) : null,
+        queue: human && !done ? this.session.queueOf(0) : [],
       },
       now,
     );
@@ -474,7 +519,7 @@ class App {
       army = [obs.ownedArmyCount, obs.opponentArmyCount];
       land = [obs.ownedLandCount, obs.opponentLandCount];
     } else {
-      const t = this.session.totals();
+      const t = this.session.totals(this.session.viewState());
       army = t.army;
       land = t.land;
     }
