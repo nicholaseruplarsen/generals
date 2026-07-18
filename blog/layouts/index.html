@@ -1,0 +1,56 @@
+{{ define "main" }}
+<div class="reading-progress" aria-hidden="true"><span></span></div>
+<article>
+  <header class="article-header">
+    <div class="eyebrow">{{ .Params.kicker | default "INTERACTIVE REPORT" }}</div>
+    <h1>{{ .Title }}</h1>
+    {{ with .Params.subtitle }}<p class="dek">{{ . }}</p>{{ end }}
+    <div class="byline">
+      <span>{{ .Params.author | default "Generals Bots Research" }}</span>
+      <span>{{ .Date.Format "02 January 2006" }}</span>
+      <span>{{ .ReadingTime }} min read</span>
+    </div>
+  </header>
+  <div class="article-shell">
+    <aside class="contents" aria-label="Article contents">
+      <div class="contents-label">CONTENTS</div>
+      {{ .TableOfContents }}
+    </aside>
+    <main class="article-body">
+      {{ .Content }}
+
+      <div class="eyebrow" id="field-notes" style="margin-top: 72px;">FIELD NOTES</div>
+      <div class="post-grid" style="margin-top: 0;">
+      {{ range site.RegularPages.ByDate.Reverse }}
+        <a class="post-card" href="{{ .RelPermalink }}">
+          {{ with .Params.card }}<img src="{{ strings.TrimPrefix "/" . | relURL }}" alt="">{{ end }}
+          <div>
+            <span class="post-card-kicker">{{ .Params.kicker }}</span>
+            <h2>{{ .Title }}</h2>
+            <p>{{ .Params.subtitle }}</p>
+            <span class="post-card-meta">{{ .Date.Format "02 Jan 2006" }} · {{ .ReadingTime }} min</span>
+          </div>
+        </a>
+      {{ end }}
+      </div>
+    </main>
+  </div>
+</article>
+<script>
+(() => {
+  const bar = document.querySelector('.reading-progress span');
+  const links = [...document.querySelectorAll('.contents a')];
+  const headings = links.map(link => document.getElementById(decodeURIComponent(link.getAttribute('href')).slice(1))).filter(Boolean);
+  const update = () => {
+    const root = document.documentElement;
+    const distance = root.scrollHeight - root.clientHeight;
+    bar.style.width = `${distance > 0 ? (root.scrollTop / distance) * 100 : 0}%`;
+    let active = 0;
+    headings.forEach((heading, index) => { if (heading.getBoundingClientRect().top < 160) active = index; });
+    links.forEach((link, index) => link.classList.toggle('active', index === active));
+  };
+  addEventListener('scroll', update, {passive: true});
+  update();
+})();
+</script>
+{{ end }}
