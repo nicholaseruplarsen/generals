@@ -8,7 +8,7 @@
     "build": "tsc --noEmit && vite build",
     "build:blog": "hugo --source blog --destination ../_site/generals --baseURL /generals/",
     "preview": "vite preview",
-    "site": "npm run build:blog && npm run build && echo 'site: http://localhost:5174/generals/' && python3 -m http.server 5174 -d _site",
+    "site": "npm run build:blog && npm run build && echo 'site: http://localhost:5173/generals/' && python3 -m http.server 5173 -d _site",
     "test": "vitest run",
     "test:watch": "vitest"
   },
