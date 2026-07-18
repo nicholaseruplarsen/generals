@@ -6,9 +6,9 @@ import * as ort from "onnxruntime-web";
 import type { Action, Observation } from "../engine/types";
 import { GeneralsBot, ortSessionLike } from "./infer";
 
-// onnxruntime-web downloads its WASM binaries at runtime; they are served
-// from the app root, so prefix with the vite base path (/generals/ in prod).
-ort.env.wasm.wasmPaths = import.meta.env.BASE_URL;
+// onnxruntime-web downloads its WASM binaries at runtime; they are copied
+// into public/ort/ and served under the vite base path (/generals/ in prod).
+ort.env.wasm.wasmPaths = `${import.meta.env.BASE_URL}ort/`;
 
 export type WorkerRequest =
   | { type: "init"; modelUrl: string }
