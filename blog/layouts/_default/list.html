@@ -6,7 +6,7 @@
   <div class="post-grid">
   {{ range site.RegularPages.ByDate.Reverse }}
     <a class="post-card" href="{{ .RelPermalink }}">
-      {{ with .Params.card }}<img src="{{ . }}" alt="">{{ end }}
+      {{ with .Params.card }}<img src="{{ strings.TrimPrefix "/" . | relURL }}" alt="">{{ end }}
       <div>
         <span class="post-card-kicker">{{ .Params.kicker }}</span>
         <h2>{{ .Title }}</h2>
