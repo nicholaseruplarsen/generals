@@ -187,6 +187,59 @@ canvas {
   touch-action: none;
 }
 
+/* ---- pause / resume feedback (YouTube-style) ---- */
+
+.playstate {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.playstate.paused {
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.ps-badge {
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.62);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ps-play {
+  display: none;
+}
+
+.playstate.resuming .ps-pause {
+  display: none;
+}
+
+.playstate.resuming .ps-play {
+  display: block;
+}
+
+.playstate.resuming .ps-badge {
+  animation: ps-burst 0.45s ease-out forwards;
+}
+
+@keyframes ps-burst {
+  from {
+    opacity: 1;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.9);
+  }
+}
+
 /* ---- game-over overlay ---- */
 
 .overlay {

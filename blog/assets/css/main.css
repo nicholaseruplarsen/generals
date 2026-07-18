@@ -98,7 +98,9 @@ h1, h2, h3 { text-wrap: balance; }
 .article-body code { font: .86em/1.5 var(--mono); background: rgba(49,92,255,.08); padding: .12em .3em; border-radius: 3px; }
 .article-body pre { margin: 34px 0; padding: 26px; overflow: auto; border-radius: 4px; background: var(--dark) !important; color: #f2f4ef; box-shadow: 0 14px 45px rgba(30,32,38,.12); }
 .article-body pre code { padding: 0; background: transparent; }
-.article-body .figure-breakout { width: min(1080px, calc(100vw - 48px)); margin: 54px 0 18px; transform: translateX(calc((760px - min(1080px, 100vw - 48px))/2)); }
+/* Wide figures may spill into the column gutter but never over the sticky
+   TOC (sidebar 190px + 72px gap): cap the leftward shift at the gutter. */
+.article-body .figure-breakout { width: min(900px, calc(100vw - 48px)); margin: 54px 0 18px; transform: translateX(min(0px, calc((760px - min(900px, 100vw - 48px))/2))); }
 .article-body figure img { width: 100%; background: #fff; border: 1px solid var(--line); border-radius: 4px; }
 .article-body figcaption { font: 400 12px/1.5 var(--mono); color: var(--muted); margin-top: 12px; max-width: 800px; }
 .fig-number { color: var(--blue); font-weight: 500; }

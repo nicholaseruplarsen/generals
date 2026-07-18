@@ -140,6 +140,7 @@ class App {
   private readonly statusEl: HTMLElement;
   private readonly hintEl: HTMLElement;
   private readonly overlayEl: HTMLElement;
+  private readonly playstateEl: HTMLElement;
   private readonly winnerEl: HTMLElement;
   private readonly winnerSubEl: HTMLElement;
   private readonly seedInput: HTMLInputElement;
@@ -202,6 +203,17 @@ class App {
       <main class="stage">
         <div class="board-wrap">
           <canvas id="board"></canvas>
+          <div class="playstate" id="playstate" hidden>
+            <div class="ps-badge">
+              <svg class="ps-pause" viewBox="0 0 36 36" width="34" height="34" aria-hidden="true">
+                <rect x="8" y="7" width="7" height="22" rx="1.6" fill="#fff"/>
+                <rect x="21" y="7" width="7" height="22" rx="1.6" fill="#fff"/>
+              </svg>
+              <svg class="ps-play" viewBox="0 0 36 36" width="34" height="34" aria-hidden="true">
+                <path d="M11 7l19 11-19 11z" fill="#fff"/>
+              </svg>
+            </div>
+          </div>
           <div class="overlay" id="overlay" hidden>
             <div class="card">
               <div class="winner" id="winner-text"></div>
@@ -230,6 +242,7 @@ class App {
     this.statusEl = el(root, "#status");
     this.hintEl = el(root, "#hint");
     this.overlayEl = el(root, "#overlay");
+    this.playstateEl = el(root, "#playstate");
     this.winnerEl = el(root, "#winner-text");
     this.winnerSubEl = el(root, "#winner-sub");
     this.seedInput = el(root, "#seed");
@@ -339,7 +352,30 @@ class App {
   private togglePause(): void {
     this.running = !this.running;
     this.updatePauseUi();
+    this.showPlaystate();
     this.startLoop();
+  }
+
+  /** YouTube-style pause/resume feedback over the board. */
+  private showPlaystate(): void {
+    const ps = this.playstateEl;
+    if (!this.running) {
+      // Paused: persistent dim + pause badge.
+      ps.hidden = false;
+      ps.className = "playstate paused";
+    } else {
+      // Resuming: play badge bursts (scales up and fades), then goes away.
+      ps.hidden = false;
+      ps.className = "playstate resuming";
+      const badge = ps.querySelector<HTMLElement>(".ps-badge");
+      badge?.addEventListener(
+        "animationend",
+        () => {
+          if (this.running) ps.hidden = true;
+        },
+        { once: true },
+      );
+    }
   }
 
   private updatePauseUi(): void {
@@ -362,6 +398,7 @@ class App {
     this.session = new GameSession(seed);
     this.seedInput.value = String(seed);
     this.overlayEl.hidden = true;
+    this.playstateEl.hidden = true;
 
     this.input?.detach();
     this.input = null;
@@ -388,6 +425,7 @@ class App {
 
   private finish(): void {
     this.stopLoop();
+    this.playstateEl.hidden = true;
     const w = this.session.winner;
     const human = this.mode === "human";
     this.winnerEl.textContent = human
