@@ -53,6 +53,9 @@ export class HumanInput {
   }
 
   private onPointerDown = (e: PointerEvent): void => {
+    // Clicking the board always reclaims the keyboard — if a form control
+    // (seed box, selects) kept focus, arrows would go to it, not the game.
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
     const rect = this.canvas.getBoundingClientRect();
     const col = Math.floor(((e.clientX - rect.left) / rect.width) * W);
     const row = Math.floor(((e.clientY - rect.top) / rect.height) * H);
@@ -102,7 +105,13 @@ export class HumanInput {
     const nr = row + d[0];
     const nc = col + d[1];
     if (nr < 0 || nr >= H || nc < 0 || nc >= W) return;
+    // Same blocked rule as the policy's action mask: never queue into a
+    // visible mountain or a fogged structure — otherwise the anchor follows
+    // the queue onto an impassable cell and every later keypress is dead.
+    const dest = nr * W + nc;
+    const obs = this.session.obs(this.player);
+    if (obs.mountains[dest] === 1 || obs.structuresInFog[dest] === 1) return;
     this.session.enqueue(this.player, { row, col, dir, split: this.zDown });
-    this.anchor = nr * W + nc; // selection follows the queued destination
+    this.anchor = dest; // selection follows the queued destination
   }
 }

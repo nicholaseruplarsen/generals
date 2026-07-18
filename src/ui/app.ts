@@ -256,6 +256,8 @@ class App {
     this.applyModeUi();
     this.newGame(this.session.seed);
     requestAnimationFrame(this.frame);
+    // Debug/testing handle (headless smoke tests read game state through it).
+    (window as unknown as { __app: App }).__app = this;
   }
 
   // ---- mode + controls ----------------------------------------------------
