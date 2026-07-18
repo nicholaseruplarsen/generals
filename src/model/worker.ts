@@ -2,7 +2,10 @@
 // Protocol — in:  {type:"init", modelUrl} | {type:"reset"} | {type:"act", obs}
 //           out:  {type:"ready"} | {type:"action", actionIdx, action, value}
 
-import * as ort from "onnxruntime-web";
+// The wasm-only bundle: the default "onnxruntime-web" entry includes the
+// WebGPU (jsep) backend and fetches ort-wasm-simd-threaded.jsep.mjs, which
+// we don't ship in public/ort/. This one loads the plain wasm runtime.
+import * as ort from "onnxruntime-web/wasm";
 import type { Action, Observation } from "../engine/types";
 import { GeneralsBot, ortSessionLike } from "./infer";
 
