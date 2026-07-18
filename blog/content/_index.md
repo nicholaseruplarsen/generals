@@ -39,6 +39,11 @@ The champion you played above is the product of three layers, each written up in
 - **A recurrent policy that decodes spatially.** The board is encoded as 18 numerical planes; a small CNN feeds an LSTM, and — the architectural key — the LSTM's memory is broadcast *back onto the spatial map* before move logits are decoded per-tile. This one change took the eval score from 0.32 to 0.75 at a fraction of the training steps.
 - **League training with honest rewards.** The policy trains against a league of scripted styles and frozen snapshots of itself, with a decisive twist: draws are punished (−2), because a fog-of-war self-play equilibrium otherwise converges on mutual stalling. The current champion scores **0.912** on the fixed evaluation field.
 
+<figure class="figure-breakout">
+  <img src="harness.svg" alt="Map of the generals-bots repository: the JAX simulator, the research harness with its RL track, remote compute, and the export path that produces the fixtures and ONNX model behind the in-page demo.">
+  <figcaption><span class="fig-number">FIG. 01</span> The harness behind all of it. Left to right: the replay-verified JAX simulator, the research harness that LLM agents run experiments in, and the GPUs it all trains on — with the export path that turned the champion into the demo at the top of this page.</figcaption>
+</figure>
+
 <div class="metric-grid">
   <div class="metric"><span class="metric-value">801</span><span class="metric-label">actions per half-second turn</span></div>
   <div class="metric"><span class="metric-value">2.83M</span><span class="metric-label">parameters in the champion policy</span></div>

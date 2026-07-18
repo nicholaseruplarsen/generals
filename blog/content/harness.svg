@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 860" role="img" aria-labelledby="t d">
+  <title id="t">Map of the generals-bots harness</title>
+  <desc id="d">Three lanes — the JAX simulator, the research harness, and remote compute — feeding an export path that produces the fixtures and ONNX model behind the in-page demo.</desc>
+  <defs>
+    <pattern id="hgrid" width="54" height="54" patternUnits="userSpaceOnUse"><path d="M54 0H0V54" fill="none" stroke="#59606d" stroke-width="1"/></pattern>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#e9edf1"/></marker>
+    <marker id="arrAcid" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#d8ff43"/></marker>
+  </defs>
+
+  <rect width="1400" height="860" fill="#161b22"/>
+  <rect x="40" y="40" width="1320" height="780" rx="8" fill="url(#hgrid)" opacity=".55"/>
+
+  <text x="70" y="92" fill="#8c96a5" font-family="ui-monospace,monospace" font-size="13" letter-spacing="3">GENERALS-BOTS · THE HARNESS</text>
+
+  <!-- ===== Lane 1: simulator ===== -->
+  <g transform="translate(70 120)">
+    <rect width="370" height="440" rx="6" fill="#202731" stroke="#414b5a"/>
+    <text x="26" y="52" fill="#fff" font-family="Georgia,serif" font-size="27">Simulator</text>
+    <text x="26" y="76" fill="#8c96a5" font-family="ui-monospace,monospace" font-size="12">generals/ — pure JAX, replay-verified</text>
+    <g font-family="ui-monospace,monospace" font-size="13">
+      <rect x="26" y="100" width="318" height="42" rx="3" fill="#161b22"/><rect x="26" y="100" width="6" height="42" fill="#315cff"/>
+      <text x="46" y="118" fill="#fff">core/game.py</text><text x="46" y="134" fill="#8c96a5" font-size="11">jitted step · vmap/scan rollouts</text>
+      <rect x="26" y="152" width="318" height="42" rx="3" fill="#161b22"/><rect x="26" y="152" width="6" height="42" fill="#315cff"/>
+      <text x="46" y="170" fill="#fff">core/grid.py</text><text x="46" y="186" fill="#8c96a5" font-size="11">seeded maps · mountains · castles</text>
+      <rect x="26" y="204" width="318" height="42" rx="3" fill="#161b22"/><rect x="26" y="204" width="6" height="42" fill="#315cff"/>
+      <text x="46" y="222" fill="#fff">core/ffa.py</text><text x="46" y="238" fill="#8c96a5" font-size="11">N-player engine · rotating priority</text>
+      <rect x="26" y="256" width="318" height="42" rx="3" fill="#161b22"/><rect x="26" y="256" width="6" height="42" fill="#f04f3d"/>
+      <text x="46" y="274" fill="#fff">agents/</text><text x="46" y="290" fill="#8c96a5" font-size="11">Hunter · Expander · Blitz · Ghost · Baron</text>
+      <rect x="26" y="308" width="318" height="42" rx="3" fill="#161b22"/><rect x="26" y="308" width="6" height="42" fill="#5dd9d0"/>
+      <text x="46" y="326" fill="#fff">gui/</text><text x="46" y="342" fill="#8c96a5" font-size="11">replay viewer</text>
+    </g>
+    <text x="26" y="392" fill="#d8ff43" font-family="ui-monospace,monospace" font-size="11" letter-spacing="1.5">REPLAYS REAL GENERALS.IO GAMES</text>
+    <text x="26" y="410" fill="#d8ff43" font-family="ui-monospace,monospace" font-size="11" letter-spacing="1.5">MOVE-FOR-MOVE — 0 ILLEGAL MOVES</text>
+  </g>
+
+  <!-- ===== Lane 2: research harness ===== -->
+  <g transform="translate(500 120)">
+    <rect width="420" height="440" rx="6" fill="#202731" stroke="#414b5a"/>
+    <text x="26" y="52" fill="#fff" font-family="Georgia,serif" font-size="27">Research harness</text>
+    <text x="26" y="76" fill="#8c96a5" font-family="ui-monospace,monospace" font-size="12">research/ — agents run the experiments</text>
+    <g font-family="ui-monospace,monospace" font-size="13">
+      <rect x="26" y="100" width="368" height="42" rx="3" fill="#161b22"/><rect x="26" y="100" width="6" height="42" fill="#e9edf1"/>
+      <text x="46" y="118" fill="#fff">autoresearch.py · certify.sh</text><text x="46" y="134" fill="#8c96a5" font-size="11">LLM agents in worktrees · (sha,score) ledger</text>
+      <rect x="26" y="152" width="368" height="42" rx="3" fill="#161b22"/><rect x="26" y="152" width="6" height="42" fill="#e9edf1"/>
+      <text x="46" y="170" fill="#fff">evaluate.py · journal/ · best.json</text><text x="46" y="186" fill="#8c96a5" font-size="11">fixed-seed field · failed runs kept, with verdicts</text>
+    </g>
+    <text x="26" y="228" fill="#5dd9d0" font-family="ui-monospace,monospace" font-size="12" letter-spacing="2">RL TRACK — research/rl/</text>
+    <g font-family="ui-monospace,monospace" font-size="13">
+      <rect x="26" y="242" width="368" height="42" rx="3" fill="#161b22"/><rect x="26" y="242" width="6" height="42" fill="#5dd9d0"/>
+      <text x="46" y="260" fill="#fff">obs_encode.py</text><text x="46" y="276" fill="#8c96a5" font-size="11">18×10×10 planes · 801-action space · masks</text>
+      <rect x="26" y="294" width="368" height="42" rx="3" fill="#161b22"/><rect x="26" y="294" width="6" height="42" fill="#5dd9d0"/>
+      <text x="46" y="312" fill="#fff">vecenv.py</text><text x="46" y="328" fill="#8c96a5" font-size="11">league: scripted styles + frozen snapshots + ghost</text>
+      <rect x="26" y="346" width="368" height="42" rx="3" fill="#161b22"/><rect x="26" y="346" width="6" height="42" fill="#5dd9d0"/>
+      <text x="46" y="364" fill="#fff">train_jax.py</text><text x="46" y="380" fill="#8c96a5" font-size="11">pure-JAX PPO · GAE · LSTM carry · draw −2</text>
+      <rect x="26" y="398" width="368" height="30" rx="3" fill="#161b22"/><rect x="26" y="398" width="6" height="30" fill="#5dd9d0"/>
+      <text x="46" y="417" fill="#fff">jax_policy.py <tspan fill="#8c96a5" font-size="11">— exact torch↔JAX replay · weights/*.npz</tspan></text>
+    </g>
+  </g>
+
+  <!-- ===== Lane 3: compute ===== -->
+  <g transform="translate(980 120)">
+    <rect width="350" height="440" rx="6" fill="#202731" stroke="#414b5a"/>
+    <text x="26" y="52" fill="#fff" font-family="Georgia,serif" font-size="27">Compute</text>
+    <text x="26" y="76" fill="#8c96a5" font-family="ui-monospace,monospace" font-size="12">nothing heavy runs on the laptop</text>
+    <g font-family="ui-monospace,monospace" font-size="13">
+      <rect x="26" y="100" width="298" height="56" rx="3" fill="#161b22" stroke="#d8ff43"/>
+      <text x="46" y="122" fill="#fff">ssh wsl2 — RTX 4070</text>
+      <text x="46" y="140" fill="#d8ff43" font-size="11">pinned venv = THE certified metric</text>
+      <rect x="26" y="168" width="298" height="42" rx="3" fill="#161b22"/><rect x="26" y="168" width="6" height="42" fill="#f04f3d"/>
+      <text x="46" y="186" fill="#fff">ssh prime — A100 80GB spot</text><text x="46" y="202" fill="#8c96a5" font-size="11">~175K env-steps/s · 3 concurrent runs</text>
+      <rect x="26" y="222" width="298" height="42" rx="3" fill="#161b22"/><rect x="26" y="222" width="6" height="42" fill="#315cff"/>
+      <text x="46" y="240" fill="#fff">wandb + live TUIs</text><text x="46" y="256" fill="#8c96a5" font-size="11">every run's curves · watch_train.py</text>
+    </g>
+    <g font-family="ui-monospace,monospace" font-size="11" fill="#8c96a5">
+      <text x="26" y="304">the loop:</text>
+      <text x="26" y="326" fill="#e9edf1">code → train on GPU → .npz →</text>
+      <text x="26" y="344" fill="#e9edf1">certified eval on pinned venv →</text>
+      <text x="26" y="362" fill="#e9edf1">journal + best.json → next idea</text>
+      <text x="26" y="400" fill="#d8ff43" letter-spacing="1.5">SCOUT AT 10M · FUND TO 170M</text>
+      <text x="26" y="418" fill="#d8ff43" letter-spacing="1.5">BELIEVE ONLY CERTIFIED SCORES</text>
+    </g>
+  </g>
+
+  <!-- lane arrows -->
+  <g stroke="#e9edf1" stroke-width="2" fill="none">
+    <path d="M440 250 H500" marker-end="url(#arr)"/>
+    <path d="M920 250 H980" marker-end="url(#arr)"/>
+    <path d="M980 320 H920" marker-end="url(#arr)"/>
+  </g>
+  <g font-family="ui-monospace,monospace" font-size="10" fill="#8c96a5" letter-spacing="1" text-anchor="middle">
+    <text x="470" y="238">step()</text>
+    <text x="950" y="238">train</text>
+    <text x="950" y="344">.npz</text>
+  </g>
+
+  <!-- ===== Export strip ===== -->
+  <g transform="translate(70 620)">
+    <rect width="1260" height="170" rx="6" fill="#202731" stroke="#414b5a"/>
+    <text x="26" y="44" fill="#fff" font-family="Georgia,serif" font-size="24">Exports — how the bot got into this page</text>
+    <g font-family="ui-monospace,monospace" font-size="12">
+      <rect x="26" y="66" width="300" height="70" rx="3" fill="#161b22"/><rect x="26" y="66" width="6" height="70" fill="#e9edf1"/>
+      <text x="46" y="90" fill="#fff">export_web_fixtures.py</text>
+      <text x="46" y="108" fill="#8c96a5" font-size="11">golden games + policy traces from JAX</text>
+      <text x="46" y="124" fill="#8c96a5" font-size="11">→ TypeScript engine must match bit-exact</text>
+
+      <rect x="380" y="66" width="300" height="70" rx="3" fill="#161b22"/><rect x="380" y="66" width="6" height="70" fill="#e9edf1"/>
+      <text x="400" y="90" fill="#fff">export_onnx.py</text>
+      <text x="400" y="108" fill="#8c96a5" font-size="11">champion .npz → ONNX, LSTM carry as I/O</text>
+      <text x="400" y="124" fill="#8c96a5" font-size="11">verified 418/418 moves vs JAX reference</text>
+
+      <rect x="734" y="66" width="300" height="70" rx="3" fill="#161b22"/><rect x="734" y="66" width="6" height="70" fill="#5dd9d0"/>
+      <text x="754" y="90" fill="#fff">the web app</text>
+      <text x="754" y="108" fill="#8c96a5" font-size="11">TS engine + onnxruntime-web in a worker</text>
+      <text x="754" y="124" fill="#8c96a5" font-size="11">static site — no server, all in-browser</text>
+    </g>
+    <g stroke="#e9edf1" stroke-width="2" fill="none">
+      <path d="M326 101 H380" marker-end="url(#arr)"/>
+      <path d="M680 101 H734" marker-end="url(#arr)"/>
+    </g>
+    <path d="M1034 101 H1110" stroke="#d8ff43" stroke-width="2" fill="none" marker-end="url(#arrAcid)"/>
+    <circle cx="1170" cy="101" r="46" fill="#d8ff43"/>
+    <text x="1170" y="96" text-anchor="middle" fill="#161b22" font-family="Georgia,serif" font-size="17">the demo</text>
+    <text x="1170" y="114" text-anchor="middle" fill="#161b22" font-family="ui-monospace,monospace" font-size="10" letter-spacing="1">UP TOP ↑</text>
+  </g>
+
+  <!-- feed arrow from harness lane down to exports -->
+  <path d="M710 560 V620" stroke="#e9edf1" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+</svg>
