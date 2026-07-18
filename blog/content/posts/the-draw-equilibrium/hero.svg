@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 760" role="img" aria-labelledby="title desc">
+  <title id="title">The draw equilibrium, and breaking it</title>
+  <desc id="desc">Left: blue and red armies frozen in a standoff under a 500-turn clock, collecting shaping rewards. Right: a minus-two draw penalty cracking the standoff, blue converting through to the red general.</desc>
+  <defs>
+    <pattern id="grid" width="54" height="54" patternUnits="userSpaceOnUse"><path d="M54 0H0V54" fill="none" stroke="#59606d" stroke-width="1"/></pattern>
+    <filter id="glow"><feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="1400" height="760" fill="#161b22"/>
+  <rect x="40" y="40" width="1320" height="680" rx="8" fill="url(#grid)" opacity=".55"/>
+
+  <line x1="700" y1="90" x2="700" y2="670" stroke="#414b5a" stroke-width="2" stroke-dasharray="10 12"/>
+  <text x="340" y="98" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="26" fill="#8c96a5" letter-spacing="6">THE STALL</text>
+  <text x="1060" y="98" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="26" fill="#d8ff43" letter-spacing="6">THE CONVERT</text>
+
+  <!-- LEFT: the standoff -->
+  <rect x="100" y="130" width="480" height="480" rx="8" fill="#202731" stroke="#414b5a"/>
+  <!-- fog zone -->
+  <g fill="#414b5a">
+    <circle cx="300" cy="220" r="5"/><circle cx="340" cy="260" r="5"/><circle cx="380" cy="230" r="5"/>
+    <circle cx="320" cy="310" r="5"/><circle cx="370" cy="350" r="5"/><circle cx="330" cy="400" r="5"/>
+    <circle cx="390" cy="440" r="5"/><circle cx="350" cy="480" r="5"/><circle cx="300" cy="370" r="5"/>
+    <circle cx="410" cy="300" r="5"/><circle cx="280" cy="450" r="5"/><circle cx="400" cy="180" r="5"/>
+  </g>
+  <!-- blue stack -->
+  <rect x="140" y="300" width="96" height="96" rx="6" fill="#315cff" filter="url(#glow)"/>
+  <text x="188" y="360" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="34" fill="#161b22">87</text>
+  <!-- red stack -->
+  <rect x="444" y="300" width="96" height="96" rx="6" fill="#f04f3d"/>
+  <text x="492" y="360" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="34" fill="#161b22">64</text>
+  <!-- facing-off arrows that go nowhere -->
+  <path d="M244 340 h40" stroke="#8c96a5" stroke-width="6" stroke-dasharray="8 8"/>
+  <path d="M436 340 h-40" stroke="#8c96a5" stroke-width="6" stroke-dasharray="8 8"/>
+  <!-- the clock -->
+  <circle cx="340" cy="560" r="52" fill="none" stroke="#8c96a5" stroke-width="6"/>
+  <text x="340" y="572" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="30" fill="#8c96a5">500</text>
+  <text x="340" y="650" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="22" fill="#8c96a5">turns later: draw 0 · shaping +4.2 · nobody died</text>
+
+  <!-- RIGHT: the convert -->
+  <rect x="820" y="130" width="480" height="480" rx="8" fill="#202731" stroke="#414b5a"/>
+  <!-- penalty bolt -->
+  <polyline points="1040,150 1000,250 1032,250 996,350" fill="none" stroke="#d8ff43" stroke-width="10" stroke-linejoin="round" filter="url(#glow)"/>
+  <text x="1085" y="240" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="44" fill="#d8ff43" font-weight="bold">−2</text>
+  <text x="1096" y="278" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" fill="#d8ff43">per draw</text>
+  <!-- blue stack -->
+  <rect x="860" y="300" width="96" height="96" rx="6" fill="#315cff" filter="url(#glow)"/>
+  <text x="908" y="360" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="34" fill="#161b22">87</text>
+  <!-- red general star -->
+  <path d="M1216 310 l14 30 33 4 -24 22 6 32 -29 -16 -29 16 6 -32 -24 -22 33 -4 z" fill="#f04f3d"/>
+  <!-- breakthrough arrow -->
+  <path d="M964 348 H1180" stroke="#5dd9d0" stroke-width="12"/>
+  <path d="M1180 348 l-26 -14 v28 z" fill="#5dd9d0"/>
+  <!-- broken clock -->
+  <circle cx="1060" cy="560" r="52" fill="none" stroke="#414b5a" stroke-width="6"/>
+  <line x1="1024" y1="524" x2="1096" y2="596" stroke="#f04f3d" stroke-width="8"/>
+  <text x="1060" y="650" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="22" fill="#5dd9d0">stalling costs — the only way out is forward</text>
+</svg>

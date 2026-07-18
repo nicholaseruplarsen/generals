@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="{{ site.LanguageCode }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="{{ .Description | default site.Params.description }}">
+  <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
+  {{ $style := resources.Get "css/main.css" | minify | fingerprint }}
+  <link rel="stylesheet" href="{{ $style.RelPermalink }}">
+</head>
+<body>
+  <header class="site-header">
+    <a class="wordmark" href="{{ site.Home.RelPermalink }}" aria-label="Generals Research Notes home">
+      <span class="wordmark-mark" aria-hidden="true"></span>
+      <span>GENERALS / RESEARCH NOTES</span>
+    </a>
+    <div class="header-status"><span></span> FIELD LOG · 2026</div>
+  </header>
+  {{ block "main" . }}{{ end }}
+  <footer class="site-footer">
+    <span>Built in public from measured games, failed runs, and profiler traces.</span>
+    <a href="https://github.com/nicholaseruplarsen/generals-bots">Source</a>
+  </footer>
+</body>
+</html>

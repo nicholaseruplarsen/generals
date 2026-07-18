@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 650" role="img" aria-labelledby="t d">
+  <title id="t">A real self-play league</title><desc id="d">A main learning agent plays scripted curricula, historical snapshots, and exploiters. Evaluation updates matchmaking but Elo is not the league itself.</desc>
+  <rect width="1200" height="650" fill="#f4f1e8"/>
+  <style>.h{font:32px Georgia,serif;fill:#171714}.k{font:11px ui-monospace,monospace;letter-spacing:2px;fill:#6b6b62}.b{font:15px system-ui,sans-serif;fill:#171714}.s{font:12px ui-monospace,monospace;fill:#6b6b62}</style>
+  <text x="60" y="60" class="k">FIGURE 06 / ELO IS A THERMOMETER, NOT A TRAINING PROGRAM</text>
+  <g transform="translate(490 210)"><circle cx="110" cy="110" r="110" fill="#315cff"/><text x="110" y="94" class="h" style="fill:#fff" text-anchor="middle">Main agent</text><text x="110" y="124" class="s" style="fill:#d4dcff" text-anchor="middle">PPO learner</text><text x="110" y="150" class="s" style="fill:#d4dcff" text-anchor="middle">θ changes every epoch</text></g>
+  <g transform="translate(60 135)"><rect width="280" height="120" rx="7" fill="#fff" stroke="#d2cec0"/><text x="24" y="39" class="h">Curriculum</text><text x="24" y="68" class="s">Random → Expander → Hunter</text><text x="24" y="92" class="s">learn basic competence first</text></g>
+  <g transform="translate(60 380)"><rect width="280" height="120" rx="7" fill="#fff" stroke="#d2cec0"/><text x="24" y="39" class="h">History</text><text x="24" y="68" class="s">frozen θ₁, θ₂, θ₃ …</text><text x="24" y="92" class="s">prevent strategic forgetting</text></g>
+  <g transform="translate(860 135)"><rect width="280" height="120" rx="7" fill="#fff" stroke="#d2cec0"/><text x="24" y="39" class="h">Exploiters</text><text x="24" y="68" class="s">train only to break main</text><text x="24" y="92" class="s">surface blind spots</text></g>
+  <g transform="translate(860 380)"><rect width="280" height="120" rx="7" fill="#fff" stroke="#d2cec0"/><text x="24" y="39" class="h">Evaluator</text><text x="24" y="68" class="s">paired maps · both seats</text><text x="24" y="92" class="s">matchups, Elo, exploitability</text></g>
+  <g fill="none" stroke-width="3"><path d="M340 195C410 195 430 250 492 270" stroke="#5dd9d0"/><path d="M340 440C420 440 445 380 503 345" stroke="#315cff"/><path d="M860 195C790 195 770 250 708 270" stroke="#f04f3d"/><path d="M860 440C780 440 755 380 697 345" stroke="#d8aa28"/></g>
+  <g transform="translate(406 540)"><rect width="388" height="55" rx="28" fill="#d8ff43"/><text x="194" y="34" class="s" text-anchor="middle" fill="#171714">MATCHMAKING SAMPLES THE POPULATION</text></g>
+  <text x="600" y="110" class="b" text-anchor="middle">Robustness comes from who stays alive in the pool—not from the rating formula.</text>
+</svg>

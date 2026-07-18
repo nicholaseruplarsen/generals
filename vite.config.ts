@@ -2,9 +2,13 @@
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 
-// Deployed at https://nicholaseruplarsen.github.io/generals/ — base must match.
+// The site (Hugo blog, blog/) deploys at /generals/; the game lives under it
+// at /generals/play/. `npm run site` builds both into _site/generals/.
 export default defineConfig({
-  base: "/generals/",
+  base: "/generals/play/",
+  build: {
+    outDir: "_site/generals/play",
+  },
   resolve: {
     alias: [
       // onnxruntime-web's exports map blocks deep imports; the worker needs

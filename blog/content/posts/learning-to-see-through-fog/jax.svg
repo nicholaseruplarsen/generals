@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 650" role="img" aria-labelledby="t d">
+  <title id="t">JAX transforms one pure function across batch, time, and gradients</title><desc id="d">A single turn function is vectorized over games, scanned over time, differentiated, and compiled into one accelerator program.</desc>
+  <rect width="1200" height="650" fill="#f4f1e8"/>
+  <style>.h{font:32px Georgia,serif;fill:#171714}.k{font:11px ui-monospace,monospace;letter-spacing:2px;fill:#6b6b62}.b{font:15px system-ui,sans-serif;fill:#171714}.s{font:12px ui-monospace,monospace;fill:#6b6b62}</style>
+  <text x="60" y="60" class="k">FIGURE 04 / JAX IS A FUNCTION-TRANSFORMATION MACHINE</text>
+  <g transform="translate(55 120)">
+    <rect width="250" height="380" rx="7" fill="#fff" stroke="#d2cec0"/><text x="24" y="42" class="h">One turn</text><text x="24" y="70" class="s">a pure function</text>
+    <g transform="translate(23 110)" class="s"><text y="0">def turn(carry, key):</text><text y="28">  obs = observe(state)</text><text y="56">  action = policy(obs)</text><text y="84">  state = step(action)</text><text y="112">  return carry, data</text></g>
+    <rect x="23" y="278" width="204" height="62" rx="4" fill="#161b22"/><text x="125" y="305" class="s" text-anchor="middle" fill="#fff">arrays in</text><text x="125" y="328" class="s" text-anchor="middle" fill="#fff">arrays out</text>
+  </g>
+  <g transform="translate(350 102)">
+    <g><rect width="230" height="105" rx="6" fill="#eef1ff" stroke="#aab9ff"/><text x="20" y="35" class="h">vmap</text><text x="20" y="64" class="s">1 game → 2,048 games</text><g transform="translate(158 22)" fill="#315cff"><circle cx="0" cy="10" r="6"/><circle cx="22" cy="10" r="6"/><circle cx="44" cy="10" r="6"/><circle cx="11" cy="32" r="6"/><circle cx="33" cy="32" r="6"/></g></g>
+    <g transform="translate(0 132)"><rect width="230" height="105" rx="6" fill="#e9faf8" stroke="#86dcd5"/><text x="20" y="35" class="h">scan</text><text x="20" y="64" class="s">1 turn → 64 turns</text><path d="M154 50h54M198 42l10 8-10 8" fill="none" stroke="#15998f" stroke-width="3"/></g>
+    <g transform="translate(0 264)"><rect width="230" height="105" rx="6" fill="#fff5e0" stroke="#ddc589"/><text x="20" y="35" class="h">grad</text><text x="20" y="64" class="s">loss → every derivative</text><path d="M157 69c10-39 20 30 32-7s17 16 23-15" fill="none" stroke="#f04f3d" stroke-width="3"/></g>
+  </g>
+  <g transform="translate(635 102)">
+    <rect width="500" height="369" rx="8" fill="#161b22"/>
+    <text x="28" y="47" class="h" style="fill:#fff">jit</text><text x="28" y="76" class="s" style="fill:#aeb5bf">trace once · compile one device program</text>
+    <g transform="translate(35 115)">
+      <rect width="430" height="42" rx="4" fill="#315cff"/><text x="215" y="26" class="s" style="fill:#fff" text-anchor="middle">OBSERVE 2,048 GAMES</text>
+      <rect y="58" width="430" height="42" rx="4" fill="#5dd9d0"/><text x="215" y="84" class="s" style="fill:#161b22" text-anchor="middle">CNN + LSTM + SAMPLE ACTIONS</text>
+      <rect y="116" width="430" height="42" rx="4" fill="#d8ff43"/><text x="215" y="142" class="s" style="fill:#161b22" text-anchor="middle">STEP RULES × 64 TURNS</text>
+      <rect y="174" width="430" height="42" rx="4" fill="#f04f3d"/><text x="215" y="200" class="s" style="fill:#fff" text-anchor="middle">GAE + PPO + ADAM UPDATE</text>
+    </g>
+    <text x="250" y="344" class="k" text-anchor="middle" fill="#8c96a5">NO PYTHON IN THE HOT LOOP</text>
+  </g>
+  <path d="M305 310h38M580 286h48" stroke="#171714" stroke-width="2"/><path d="m333 302 10 8-10 8M618 278l10 8-10 8" fill="none" stroke="#171714" stroke-width="2"/>
+  <text x="600" y="590" class="b" text-anchor="middle">Pure state makes the program easier to transform—and harder to accidentally mutate.</text>
+</svg>

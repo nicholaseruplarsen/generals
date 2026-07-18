@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 760" role="img" aria-labelledby="title desc">
+  <title id="title">Weighted evaluation scores across the session's key runs</title>
+  <desc id="desc">Horizontal bar ladder from 0.6730 to 0.9120. Falsified directions in red, scouts in teal, funded runs in blue, champion in gold.</desc>
+  <rect width="1400" height="760" fill="#161b22"/>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+
+    <!-- axis: 0.65 -> 0.95 mapped to x 360 -> 1290 (930px / 0.30) -->
+    <!-- gridlines -->
+    <g stroke="#414b5a" stroke-width="1">
+      <line x1="360" y1="90" x2="360" y2="690"/><line x1="515" y1="90" x2="515" y2="690"/>
+      <line x1="670" y1="90" x2="670" y2="690"/><line x1="825" y1="90" x2="825" y2="690"/>
+      <line x1="980" y1="90" x2="980" y2="690"/><line x1="1135" y1="90" x2="1135" y2="690"/>
+      <line x1="1290" y1="90" x2="1290" y2="690"/>
+    </g>
+    <g font-size="18" fill="#8c96a5" text-anchor="middle">
+      <text x="360" y="716">0.65</text><text x="515" y="716">0.70</text><text x="670" y="716">0.75</text>
+      <text x="825" y="716">0.80</text><text x="980" y="716">0.85</text><text x="1135" y="716">0.90</text>
+      <text x="1290" y="716">0.95</text>
+    </g>
+    <text x="700" y="60" text-anchor="middle" font-size="22" fill="#8c96a5" letter-spacing="4">WEIGHTED EVAL · FIVE OPPONENTS · AXIS FROM 0.65</text>
+
+    <!-- bars: score s -> x0=360, w=(s-0.65)*3100 -->
+    <!-- 0.6730 over-shaping -->
+    <text x="344" y="146" text-anchor="end" font-size="20" fill="#f04f3d">over-shaping 0.1/0.03</text>
+    <rect x="360" y="124" width="71" height="30" fill="#f04f3d" opacity=".85"/>
+    <text x="441" y="146" font-size="20" fill="#f04f3d">0.673</text>
+    <!-- 0.7268 draw=-1 ghost pool -->
+    <text x="344" y="208" text-anchor="end" font-size="20" fill="#f04f3d">draw=−1, ghost pool</text>
+    <rect x="360" y="186" width="238" height="30" fill="#f04f3d" opacity=".85"/>
+    <text x="608" y="208" font-size="20" fill="#f04f3d">0.727</text>
+    <!-- 0.7307 snapmix -->
+    <text x="344" y="270" text-anchor="end" font-size="20" fill="#f04f3d">naive self-play 170M</text>
+    <rect x="360" y="248" width="250" height="30" fill="#f04f3d" opacity=".85"/>
+    <text x="620" y="270" font-size="20" fill="#f04f3d">0.731</text>
+    <!-- 0.7807 R0 -->
+    <text x="344" y="332" text-anchor="end" font-size="20" fill="#8c96a5">champion recipe @10M</text>
+    <rect x="360" y="310" width="405" height="30" fill="#8c96a5" opacity=".8"/>
+    <text x="775" y="332" font-size="20" fill="#8c96a5">0.781</text>
+    <!-- 0.7990 draw=-1 10M -->
+    <text x="344" y="394" text-anchor="end" font-size="20" fill="#5dd9d0">draw=−1 @10M</text>
+    <rect x="360" y="372" width="462" height="30" fill="#5dd9d0" opacity=".8"/>
+    <text x="832" y="394" font-size="20" fill="#5dd9d0">0.799</text>
+    <!-- 0.8297 draw=-2 10M -->
+    <text x="344" y="456" text-anchor="end" font-size="20" fill="#5dd9d0">draw=−2 @10M</text>
+    <rect x="360" y="434" width="557" height="30" fill="#5dd9d0" opacity=".9"/>
+    <text x="927" y="456" font-size="20" fill="#5dd9d0">0.830</text>
+    <!-- 0.8919 funded -->
+    <text x="344" y="518" text-anchor="end" font-size="20" fill="#315cff">funded 250M, draw=0</text>
+    <rect x="360" y="496" width="750" height="30" fill="#315cff" opacity=".85"/>
+    <text x="1120" y="518" font-size="20" fill="#6f8dff">0.892</text>
+    <!-- 0.9046 h-draw -->
+    <text x="344" y="580" text-anchor="end" font-size="20" fill="#315cff">170M, draw=−1</text>
+    <rect x="360" y="558" width="789" height="30" fill="#315cff"/>
+    <text x="1159" y="580" font-size="20" fill="#6f8dff">0.905</text>
+    <!-- 0.9120 champion -->
+    <text x="344" y="642" text-anchor="end" font-size="20" fill="#d8ff43">170M, draw=−2 ★</text>
+    <rect x="360" y="620" width="812" height="30" fill="#d8ff43"/>
+    <text x="1182" y="642" font-size="20" fill="#d8ff43" font-weight="bold">0.9120</text>
+  </g>
+</svg>

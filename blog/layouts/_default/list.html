@@ -1,0 +1,20 @@
+{{ define "main" }}
+<main class="index">
+  <div class="eyebrow">GENERALS.IO · REINFORCEMENT LEARNING</div>
+  <h1>{{ .Title }}</h1>
+  <p class="dek">{{ .Description }}</p>
+  <div class="post-grid">
+  {{ range site.RegularPages.ByDate.Reverse }}
+    <a class="post-card" href="{{ .RelPermalink }}">
+      {{ with .Params.card }}<img src="{{ . }}" alt="">{{ end }}
+      <div>
+        <span class="post-card-kicker">{{ .Params.kicker }}</span>
+        <h2>{{ .Title }}</h2>
+        <p>{{ .Params.subtitle }}</p>
+        <span class="post-card-meta">{{ .Date.Format "02 Jan 2006" }} · {{ .ReadingTime }} min</span>
+      </div>
+    </a>
+  {{ end }}
+  </div>
+</main>
+{{ end }}

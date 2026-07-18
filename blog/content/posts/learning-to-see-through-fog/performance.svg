@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="t d">
+  <title id="t">Backend benchmark and framework boundary</title><desc id="d">The old hybrid copied observations and actions through CPU memory every turn. Pure JAX and Torch-native backends are much faster.</desc>
+  <rect width="1200" height="720" fill="#fff"/>
+  <style>.h{font:32px Georgia,serif;fill:#171714}.k{font:11px ui-monospace,monospace;letter-spacing:2px;fill:#6b6b62}.b{font:15px system-ui,sans-serif;fill:#171714}.s{font:12px ui-monospace,monospace;fill:#6b6b62}.n{font:38px Georgia,serif;fill:#171714}</style>
+  <text x="60" y="60" class="k">FIGURE 05 / THE BOTTLENECK WAS BETWEEN FRAMEWORKS</text>
+  <g transform="translate(60 104)">
+    <rect width="1080" height="164" rx="7" fill="#f4f1e8" stroke="#d2cec0"/><text x="24" y="35" class="h">The slow path · every turn</text>
+    <g transform="translate(24 72)" class="s" text-anchor="middle">
+      <rect width="150" height="54" rx="4" fill="#315cff"/><text x="75" y="32" fill="#fff">TORCH POLICY</text><text x="75" y="75">GPU</text>
+      <path d="M158 27h82" stroke="#f04f3d" stroke-width="4" stroke-dasharray="7 5"/><text x="199" y="-8" fill="#f04f3d">action → CPU</text>
+      <rect x="248" width="150" height="54" rx="4" fill="#e4e0d4"/><text x="323" y="32" fill="#171714">NUMPY BUFFER</text><text x="323" y="75">HOST</text>
+      <path d="M406 27h82" stroke="#f04f3d" stroke-width="4" stroke-dasharray="7 5"/><text x="447" y="-8" fill="#f04f3d">CPU → device</text>
+      <rect x="496" width="150" height="54" rx="4" fill="#5dd9d0"/><text x="571" y="32" fill="#171714">JAX ENV</text><text x="571" y="75">GPU</text>
+      <path d="M654 27h82" stroke="#f04f3d" stroke-width="4" stroke-dasharray="7 5"/><text x="695" y="-8" fill="#f04f3d">14.7 MB obs</text>
+      <rect x="744" width="150" height="54" rx="4" fill="#e4e0d4"/><text x="819" y="32" fill="#171714">NUMPY BUFFER</text><text x="819" y="75">HOST</text>
+      <path d="M902 27h82" stroke="#f04f3d" stroke-width="4" stroke-dasharray="7 5"/><text x="943" y="-8" fill="#f04f3d">host → GPU</text>
+    </g>
+  </g>
+  <g transform="translate(60 326)">
+    <text x="0" y="0" class="h">Matched end-to-end training throughput</text><text x="0" y="28" class="s">2,048 games × 64 turns + one 8-minibatch Adam PPO epoch</text>
+    <g transform="translate(0 72)">
+      <text x="0" y="43" class="b">JAX → NumPy → Torch</text><rect x="210" y="14" width="44" height="42" rx="3" fill="#a8a8a1"/><text x="270" y="43" class="s">6,000 SPS</text>
+      <text x="0" y="117" class="b">Torch-native</text><rect x="210" y="88" width="796" height="42" rx="3" fill="#5dd9d0"/><text x="1022" y="117" class="s">114,187</text>
+      <text x="0" y="191" class="b">Pure JAX</text><rect x="210" y="162" width="900" height="42" rx="3" fill="#315cff"/><text x="1094" y="191" class="s" text-anchor="end" style="fill:#fff">129,174</text>
+    </g>
+  </g>
+  <g transform="translate(60 686)"><text x="0" y="0" class="n">21.5×</text><text x="105" y="-5" class="s">faster end to end</text><text x="430" y="0" class="n">99.5%</text><text x="545" y="-5" class="s">GPU use during JAX PPO</text><text x="830" y="0" class="n">163 W</text><text x="950" y="-5" class="s">average PPO power</text></g>
+</svg>

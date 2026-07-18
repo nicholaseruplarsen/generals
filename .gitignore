@@ -1,5 +1,8 @@
 node_modules/
 dist/
+_site/
+blog/public/
+blog/resources/
 .worktrees/
 *.log
 .DS_Store

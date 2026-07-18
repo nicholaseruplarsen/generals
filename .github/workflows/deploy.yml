@@ -23,12 +23,18 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: "0.154.2"
+          extended: true
       - run: npm ci
       - run: npm test
+      - run: hugo --source blog --destination ../_site/generals
+          --baseURL https://nicholaseruplarsen.github.io/generals/
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: _site/generals
   deploy:
     needs: build
     runs-on: ubuntu-latest

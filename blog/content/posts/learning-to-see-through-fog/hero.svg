@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 760" role="img" aria-labelledby="title desc">
+  <title id="title">A Generals board becoming tensors and gradients</title>
+  <desc id="desc">Blue and red territories meet under fog while observation planes and a PPO optimization loop rise from the board.</desc>
+  <defs>
+    <pattern id="grid" width="54" height="54" patternUnits="userSpaceOnUse"><path d="M54 0H0V54" fill="none" stroke="#59606d" stroke-width="1"/></pattern>
+    <filter id="glow"><feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <linearGradient id="fade" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#315cff"/><stop offset="1" stop-color="#5dd9d0"/></linearGradient>
+  </defs>
+  <rect width="1400" height="760" fill="#161b22"/>
+  <rect x="40" y="40" width="1320" height="680" rx="8" fill="url(#grid)" opacity=".7"/>
+  <g transform="translate(120 110)">
+    <rect width="540" height="540" rx="5" fill="#202731" stroke="#69717e"/>
+    <g opacity=".94">
+      <path d="M0 0h270v54h54v108h-54v54h-54v108h-54v54H54v108H0z" fill="#315cff" opacity=".6"/>
+      <path d="M540 0H324v54h-54v108h54v108h54v54h54v108h108z" fill="#f04f3d" opacity=".62"/>
+      <path d="M0 432h108v54h108v54H0zM432 0h108v108H486V54h-54z" fill="#5dd9d0" opacity=".28"/>
+    </g>
+    <g fill="#0d1117">
+      <rect x="108" y="54" width="54" height="54"/><rect x="378" y="108" width="54" height="54"/><rect x="54" y="324" width="54" height="54"/><rect x="324" y="378" width="54" height="54"/><rect x="216" y="270" width="54" height="54"/>
+    </g>
+    <g font-family="ui-monospace,monospace" font-size="17" text-anchor="middle" dominant-baseline="middle" fill="#fff">
+      <circle cx="81" cy="81" r="20" fill="#315cff" stroke="#d8ff43" stroke-width="4"/><text x="81" y="81">G</text>
+      <circle cx="459" cy="297" r="20" fill="#f04f3d" stroke="#d8ff43" stroke-width="4"/><text x="459" y="297">?</text>
+      <text x="189" y="189">14</text><text x="297" y="243">31</text><text x="405" y="351">8</text><text x="135" y="405">6</text>
+    </g>
+    <g fill="#aeb5bf" opacity=".62">
+      <rect x="270" width="54" height="54"/><rect x="324" width="54" height="54"/><rect x="378" width="54" height="54"/>
+      <rect x="270" y="54" width="54" height="54"/><rect x="324" y="54" width="54" height="54"/><rect x="378" y="54" width="54" height="54"/>
+      <rect x="432" y="54" width="54" height="54"/><rect x="270" y="108" width="54" height="54"/><rect x="324" y="108" width="54" height="54"/>
+    </g>
+    <text x="26" y="516" fill="#d8ff43" font-family="ui-monospace,monospace" font-size="12" letter-spacing="2">PARTIAL OBSERVATION · TICK 184</text>
+  </g>
+  <g transform="translate(750 104)" font-family="ui-monospace,monospace">
+    <text x="0" y="0" fill="#8c96a5" font-size="12" letter-spacing="2">ONE TURN / UNDER THE HOOD</text>
+    <g transform="translate(0 52)">
+      <rect width="510" height="74" rx="4" fill="#202731" stroke="#414b5a"/><rect width="8" height="74" fill="#315cff"/>
+      <text x="30" y="31" fill="#fff" font-size="17">OBSERVATION</text><text x="30" y="53" fill="#8c96a5" font-size="12">18 × 10 × 10 float planes</text>
+    </g>
+    <path d="M255 126v34" stroke="#d8ff43" stroke-width="2" marker-end="url(#none)"/>
+    <g transform="translate(0 162)">
+      <rect width="510" height="106" rx="4" fill="#202731" stroke="#414b5a"/><rect width="8" height="106" fill="#5dd9d0"/>
+      <text x="30" y="31" fill="#fff" font-size="17">CNN → LSTM</text><text x="30" y="55" fill="#8c96a5" font-size="12">space becomes memory</text>
+      <g transform="translate(290 25)" fill="none" stroke="url(#fade)" stroke-width="4" filter="url(#glow)"><path d="M0 30c30-44 58 44 88 0s58 44 88 0"/></g>
+    </g>
+    <g transform="translate(0 304)">
+      <rect width="242" height="86" rx="4" fill="#315cff"/><text x="24" y="33" fill="#fff" font-size="16">ACTOR</text><text x="24" y="58" fill="#c9d4ff" font-size="12">801 action logits</text>
+      <rect x="268" width="242" height="86" rx="4" fill="#e9edf1"/><text x="292" y="33" fill="#161b22" font-size="16">CRITIC</text><text x="292" y="58" fill="#59606d" font-size="12">V(observation)</text>
+    </g>
+    <g transform="translate(0 430)">
+      <path d="M0 54H510" stroke="#414b5a"/><path d="M24 54C80 8 120 92 178 45s116-38 166 5 96-26 142-12" fill="none" stroke="#d8ff43" stroke-width="4"/>
+      <circle cx="344" cy="50" r="8" fill="#f04f3d"/><text x="0" y="112" fill="#8c96a5" font-size="12" letter-spacing="1.6">ADVANTAGE FLOWS BACKWARD</text>
+    </g>
+    <g transform="translate(0 590)">
+      <rect width="510" height="56" rx="28" fill="#d8ff43"/><text x="255" y="35" text-anchor="middle" fill="#161b22" font-size="14" font-weight="700">CLIP · DIFFERENTIATE · UPDATE · REPEAT</text>
+    </g>
+  </g>
+</svg>

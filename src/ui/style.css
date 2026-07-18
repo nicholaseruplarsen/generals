@@ -3,7 +3,7 @@
 
 @font-face {
   font-family: "Quicksand";
-  src: url("/generals/fonts/quicksand.woff2") format("woff2");
+  src: url("/generals/play/fonts/quicksand.woff2") format("woff2");
   font-weight: 300 700;
   font-display: swap;
 }

@@ -1,0 +1,59 @@
+{{- /*
+  Embeds the playable generals web app (the ~/Desktop/generals repo, deployed
+  at /generals/ next to this blog) as a static, centered demo.
+
+  Params:
+    mode  — "human" (default, play vs the champion) or "bots" (spectate)
+    src   — override the game base URL (defaults to the vite dev server under
+            `hugo server`, /generals/ in production)
+*/ -}}
+{{- $mode := .Get "mode" | default "human" -}}
+{{- /* hugo server: the game isn't built yet, use the vite dev server */ -}}
+{{- $default := cond hugo.IsServer "http://localhost:5173/generals/play/" (relURL "play/") -}}
+{{- $base := .Get "src" | default (site.Params.gameURL | default $default) -}}
+{{- $src := printf "%s?embed=1%s" $base (cond (eq $mode "bots") "&mode=bots" "") -}}
+<figure class="generals-game">
+  <div class="gg-frame">
+    <iframe src="{{ $src }}" title="generals — play against the trained bot" loading="eager"></iframe>
+    <div class="gg-toolbar">
+      <span class="gg-hint">arrows / WASD to move &nbsp;·&nbsp; Z split &nbsp;·&nbsp; E undo &nbsp;·&nbsp; Q clear queue</span>
+      <a href="{{ $base }}" target="_blank" rel="noopener">Open fullscreen ⛶</a>
+    </div>
+  </div>
+</figure>
+
+<style>
+  .generals-game {
+    margin: 0 auto 48px;
+    max-width: 640px;
+  }
+  .generals-game .gg-frame {
+    background: #222;
+    border: 1px solid #333;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 14px 44px rgba(0, 0, 0, 0.18);
+  }
+  .generals-game iframe {
+    display: block;
+    width: 100%;
+    height: 715px;
+    border: 0;
+  }
+  .generals-game .gg-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    padding: 9px 14px;
+    background: #1b1b1b;
+    font: 500 12px/1.4 var(--mono, monospace);
+  }
+  .generals-game .gg-hint { color: #8a8a8a; }
+  .generals-game .gg-toolbar a {
+    color: #9a9a9a;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .generals-game .gg-toolbar a:hover { color: #23a29e; }
+</style>

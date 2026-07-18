@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="t d">
+  <title id="t">PPO credit assignment and clipping</title><desc id="d">A terminal win sends advantage backward through time; PPO then limits how much the new policy probability can differ from the old policy.</desc>
+  <rect width="1200" height="700" fill="#fff"/>
+  <style>.h{font:32px Georgia,serif;fill:#171714}.k{font:11px ui-monospace,monospace;letter-spacing:2px;fill:#6b6b62}.b{font:15px system-ui,sans-serif;fill:#171714}.s{font:12px ui-monospace,monospace;fill:#6b6b62}</style>
+  <text x="60" y="60" class="k">FIGURE 03 / PPO IS CREDIT ASSIGNMENT PLUS A SPEED LIMIT</text>
+  <g transform="translate(60 108)">
+    <text x="0" y="0" class="h">A. Send the outcome backward</text><text x="0" y="28" class="s">GAE estimates which actions were better than the critic expected.</text>
+    <line x1="0" y1="170" x2="1080" y2="170" stroke="#d2cec0" stroke-width="2"/>
+    <g fill="#315cff"><circle cx="40" cy="170" r="8"/><circle cx="190" cy="170" r="8"/><circle cx="340" cy="170" r="8"/><circle cx="490" cy="170" r="8"/><circle cx="640" cy="170" r="8"/><circle cx="790" cy="170" r="8"/><circle cx="940" cy="170" r="8"/></g>
+    <g class="s" text-anchor="middle"><text x="40" y="204">expand</text><text x="190" y="204">garrison</text><text x="340" y="204">city</text><text x="490" y="204">scout</text><text x="640" y="204">turn</text><text x="790" y="204">attack</text><text x="940" y="204">capture</text></g>
+    <circle cx="1065" cy="170" r="40" fill="#d8ff43"/><text x="1065" y="166" class="h" text-anchor="middle">+1</text><text x="1065" y="190" class="s" text-anchor="middle">WIN</text>
+    <g fill="none" stroke="#f04f3d" stroke-width="4"><path d="M1020 140C850 55 700 64 540 126"/><path d="M1024 132C740 2 460 14 210 127" opacity=".62"/><path d="M1018 151C930 102 850 108 790 137" opacity=".9"/></g>
+    <text x="520" y="82" class="s" fill="#f04f3d">discounted credit: γλ determines how far it reaches</text>
+  </g>
+  <line x1="60" y1="390" x2="1140" y2="390" stroke="#d2cec0"/>
+  <g transform="translate(60 445)">
+    <text x="0" y="0" class="h">B. Stop one batch from rewriting the policy</text><text x="0" y="28" class="s">r_t = new action probability ÷ old action probability</text>
+    <g transform="translate(520 -18)">
+      <rect x="158" y="35" width="164" height="180" fill="#eef1ff"/>
+      <line x1="0" y1="195" x2="500" y2="195" stroke="#6b6b62"/><line x1="240" y1="20" x2="240" y2="220" stroke="#6b6b62"/>
+      <line x1="158" y1="35" x2="158" y2="215" stroke="#315cff" stroke-dasharray="5 5"/><line x1="322" y1="35" x2="322" y2="215" stroke="#315cff" stroke-dasharray="5 5"/>
+      <path d="M20 210L455 18" fill="none" stroke="#f04f3d" stroke-width="4"/><path d="M20 210L158 149L322 77L470 77" fill="none" stroke="#315cff" stroke-width="5"/>
+      <g class="s" text-anchor="middle"><text x="158" y="239">0.8</text><text x="240" y="239">1.0</text><text x="322" y="239">1.2</text></g>
+      <text x="400" y="51" class="s" fill="#315cff">clipped</text><text x="405" y="126" class="s" fill="#f04f3d">unclipped</text>
+    </g>
+    <g transform="translate(0 82)"><rect width="435" height="143" rx="5" fill="#f4f1e8" stroke="#d2cec0"/><text x="22" y="34" class="b">The intuition</text><text x="22" y="64" class="s">If an action worked, make it more likely.</text><text x="22" y="88" class="s">If it failed, make it less likely.</text><text x="22" y="118" class="s">But cap the change at roughly ±20% per update.</text></g>
+  </g>
+</svg>
