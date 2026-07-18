@@ -1,0 +1,263 @@
+/* generals — dark theme, generals.io-like chrome around the canvas board. */
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #0d1117;
+  color: #dbe2ec;
+  font:
+    14px/1.45 system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
+}
+
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- header bar ---- */
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 10px 16px;
+  background: #11161d;
+  border-bottom: 1px solid #1f2733;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.brand {
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 0.4px;
+  color: #fff;
+}
+
+.scoreboard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #1a2230;
+  border: 1px solid #273242;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.chip i {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.chip.p0 i {
+  background: #4363d8;
+}
+
+.chip.p1 i {
+  background: #e6194b;
+}
+
+.chip .sep {
+  color: #5b6a7e;
+  font-weight: 400;
+}
+
+.chip .land {
+  color: #9fb0c3;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.turn {
+  color: #9fb0c3;
+  min-width: 72px;
+  text-align: center;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+
+.ctl {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+button,
+select,
+input {
+  font: inherit;
+  color: inherit;
+  background: #1a2230;
+  border: 1px solid #2a3648;
+  border-radius: 8px;
+  padding: 5px 10px;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: #222d3f;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+button.primary {
+  background: #2f6feb;
+  border-color: #2f6feb;
+  color: #fff;
+  font-weight: 700;
+}
+
+button.primary:hover {
+  background: #3a7bff;
+}
+
+.seg button.active {
+  background: #2f6feb;
+  border-color: #2f6feb;
+  color: #fff;
+}
+
+input[type="number"] {
+  width: 110px;
+}
+
+input[type="range"] {
+  padding: 0;
+  accent-color: #2f6feb;
+}
+
+.tps {
+  color: #9fb0c3;
+  min-width: 44px;
+}
+
+/* ---- board ---- */
+
+.stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 12px 28px;
+}
+
+.board-wrap {
+  position: relative;
+  line-height: 0;
+  border: 1px solid #273242;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+}
+
+canvas {
+  display: block;
+  width: min(480px, 92vw);
+  height: auto;
+  background: #0b0e13;
+  touch-action: none;
+}
+
+/* ---- game-over overlay ---- */
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(7, 10, 15, 0.72);
+  backdrop-filter: blur(2px);
+  line-height: 1.4;
+}
+
+.card {
+  text-align: center;
+  background: #131a24;
+  border: 1px solid #2a3648;
+  border-radius: 14px;
+  padding: 26px 38px;
+}
+
+.winner {
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.winner.p0 {
+  color: #6f8dff;
+}
+
+.winner.p1 {
+  color: #ff5d7e;
+}
+
+.card .sub {
+  color: #9fb0c3;
+  margin-bottom: 18px;
+}
+
+/* ---- footer text ---- */
+
+.hint {
+  color: #7e8fa5;
+  max-width: 480px;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.status {
+  color: #5f7188;
+  font-size: 12px;
+  min-height: 16px;
+}
+
+.status.error {
+  color: #ff7b72;
+}
