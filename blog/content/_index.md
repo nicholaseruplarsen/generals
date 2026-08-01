@@ -1,53 +1,74 @@
 ---
-title: "Learning to See Through Fog"
-subtitle: "Teaching a neural network to conquer a world it cannot fully see — and playing the result, right here in your browser."
-description: "The Generals project: building a reinforcement-learning agent for generals.io, with the trained bot playable in the page."
-date: 2026-07-18
+title: "Anatomy of a Generals Bot"
+subtitle: "The current champion, drawn out end to end: 2.72M parameters that look at a fogged board and pick one of 4,410 moves, twice a second."
+description: "The architecture of the AverageJoe champion policy for the generals.io competition — the network, the self-play training loop, and the numpy bot that ships."
+date: 2026-08-01
 draft: false
 author: "Nicholas Erup Larsen"
-kicker: "THE GENERALS PROJECT · INTERACTIVE REPORT"
+kicker: "THE GENERALS PROJECT · ARCHITECTURE"
 ---
 
-This is the project's current champion — a 2.8M-parameter recurrent policy trained end-to-end in JAX, exported to ONNX, running entirely in your browser. You are blue; the crown is your general. Take the red one before it takes yours.
+Every half-second the bot sees a partially hidden board and has to commit to a single move. This page is the whole machine that makes that decision, and the pipeline that produced its weights — two plates and the numbers behind them. The playable demo lives at [/generals/play/](play/), and the failed runs and forensics are in the [field notes](#field-notes) at the bottom.
 
-{{< generals-game mode="human" >}}
+## The champion
 
-## The game
+The current champion is **`r4_ema`** — a compact convolutional policy called *AverageJoe*, trained in JAX. It is the fourth generation of a lineage that started on a rented H100 and has been finetuned on a desktop 4070 since.
 
-[Generals.io](https://generals.io) is a real-time strategy game played on a grid. Each player starts with a single **general** producing one army every other tick. Moving armies onto neutral or enemy tiles captures them; every tile you hold adds to your income; **cities** are expensive to take but produce like generals. The map is covered in **fog** — you only see tiles adjacent to your own — and both players move simultaneously, twice per second. The win condition is absolute: capture the enemy general and everything they own becomes yours.
-
-Simple rules, vicious dynamics. Expansion compounds income, but every tile you spread to is a tile you must defend, and the player who finds the enemy general first can often end the game with a single well-timed push through the fog.
-
-## The problem
-
-As a reinforcement-learning problem, generals.io stacks four hard things on top of each other:
-
-- **Partial observability.** The policy never sees the true state. Where the enemy general sits, how big their army is, whether they are expanding or massing — all of it must be *inferred from history*, which is why our policies carry memory (an LSTM) rather than reacting to single frames.
-- **Long horizons, sparse outcomes.** A game runs hundreds of turns, and the only outcome that truly matters — the general falls or it doesn't — arrives at the very end. Credit for a win must flow backward through every move that set it up.
-- **A brutal action space.** On our 10×10 training boards there are 801 possible actions every half-second: any owned tile, four directions, full or half stack, or pass.
-- **Non-stationary opponents.** Training against a fixed opponent produces a bot that beats exactly that opponent. Training against yourself produces whatever equilibrium is laziest — our reward function once paid the agent to stall forever, a story told in [The Draw Equilibrium](posts/the-draw-equilibrium/).
-
-## The competition
-
-The long-term target is the **EquiLibre Technologies generals.io AI competition** — bots against bots under pinned rulesets (round 1: 15×15 boards, 600-tick games). Our simulator replays real generals.io games move-for-move to guarantee the rules match, and every candidate agent is scored on a fixed evaluation field of scripted playstyles — expander, hunter, blitz, ghost, and friends — on a pinned GPU environment, so numbers are comparable across months of experiments.
-
-## The current best approach
-
-The champion you played above is the product of three layers, each written up in the [field notes](#field-notes):
-
-- **A pure-JAX stack.** The game engine is a jitted, vmappable JAX function, so thousands of games run in parallel on one GPU; the PPO trainer is JAX end-to-end, holding rollouts, advantage estimation, and updates on-device at roughly 175K environment steps per second on a single A100. Cheap experiments are what make the rest possible.
-- **A recurrent policy that decodes spatially.** The board is encoded as 18 numerical planes; a small CNN feeds an LSTM, and — the architectural key — the LSTM's memory is broadcast *back onto the spatial map* before move logits are decoded per-tile. This one change took the eval score from 0.32 to 0.75 at a fraction of the training steps.
-- **League training with honest rewards.** The policy trains against a league of scripted styles and frozen snapshots of itself, with a decisive twist: draws are punished (−2), because a fog-of-war self-play equilibrium otherwise converges on mutual stalling. The current champion scores **0.912** on the fixed evaluation field.
-
-<figure class="figure-breakout">
-  <img src="harness.svg" alt="Map of the generals-bots repository: the JAX simulator, the research harness with its RL track, remote compute, and the export path that produces the fixtures and ONNX model behind the in-page demo.">
-  <figcaption><span class="fig-number">FIG. 01</span> The harness behind all of it. Left to right: the replay-verified JAX simulator, the research harness that LLM agents run experiments in, and the GPUs it all trains on — with the export path that turned the champion into the demo at the top of this page.</figcaption>
-</figure>
+It is deliberately small. An earlier transformer policy with far more capacity lost 90% of its head-to-head games against this one, so the transformer track was abandoned. What the CNN gives up in raw expressiveness it wins back in throughput: at this size the training loop runs tens of thousands of agent-steps per second on a single GPU, and cheap experiments are what actually move the number.
 
 <div class="metric-grid">
-  <div class="metric"><span class="metric-value">801</span><span class="metric-label">actions per half-second turn</span></div>
-  <div class="metric"><span class="metric-value">2.83M</span><span class="metric-label">parameters in the champion policy</span></div>
-  <div class="metric"><span class="metric-value">0.912</span><span class="metric-label">score on the fixed evaluation field</span></div>
+  <div class="metric"><span class="metric-value">2.72M</span><span class="metric-label">parameters in the champion policy</span></div>
+  <div class="metric"><span class="metric-value">4,410</span><span class="metric-label">legal-masked actions per turn</span></div>
+  <div class="metric"><span class="metric-value">38</span><span class="metric-label">input planes on a 21×21 canvas</span></div>
 </div>
 
-Everything else — the failed runs, the profiler traces, the reward-hacking forensics — lives in the field notes below.
+## The network
+
+A convolution only sees its own neighbourhood, and generals.io is a game about the whole board — where the enemy general probably is, who is ahead on income, whether it is time to expand or to push. So the trunk is a plain residual CNN, and twice on the way through, a vector pooled from *every* tile is broadcast back onto *every* tile. That is the one architectural idea in the network: attention's global view, at the price of two small MLPs.
+
+Two other things are worth pointing at in the plate below. The observation is not just the current frame — a persistent per-environment state carries fog memory (what has been seen, where terrain was remembered) plus the last seven army-delta frames for each player, which is how the policy reads momentum. And the enemy's army and land totals over the last 512 turns go through their own encoder, so the network can tell a player who is quietly massing from one who is spending.
+
+<figure class="figure-breakout">
+  <img src="architecture.svg" alt="The GlobalContextCNN: a fogged observation is augmented into 38 planes, projected to width 192, passed through six residual convolution blocks with two global-context injections and a temporal opponent-history branch, then decoded per tile into ten action planes and a distributional value.">
+  <figcaption><span class="fig-number">FIG. 01</span> One tick through the champion. The blue path is learned; the red box is the hard legality mask that makes illegal moves impossible rather than merely unlikely; the dashed value head exists only during training and is stripped out of the shipped bot.</figcaption>
+</figure>
+
+The policy head is per-tile: one linear layer applied at each of the 441 positions, producing ten planes — four full-army moves, four half moves, pass, and build-a-castle. Illegal entries get −1e9 added before the softmax, so the network never has to learn the rulebook, only the strategy. The value head is distributional: instead of regressing a scalar it classifies the outcome into 128 bins between −1.6 and +1.6, which is much better behaved when almost every game ends in an exact ±1.
+
+## How it is trained
+
+Nothing about this is trained from a human playbook. The one place humans enter is the warm start: 18,803 ranked 1v1 replays, re-simulated tick by tick through the engine so that 99.4% of recorded moves come out legal, then behaviour-cloned. Those replays predate the competition's build-a-castle rule, so the build channel is masked out entirely during cloning — the policy learns human movement and stays agnostic about building, then PPO discovers when a castle pays.
+
+After that it is self-play, with one important amendment. Pure self-play plateaus: the policy and its opponent improve together, the win rate sits at 50%, and the gradient stops saying anything useful. So a share of environments have the other seat played by a frozen past champion instead, seats randomised, actions sampled rather than greedy — the policy has to keep beating everything it used to be, not just its current self.
+
+<figure class="figure-breakout">
+  <img src="pipeline.svg" alt="Training pipeline: human replays are re-simulated and behaviour-cloned into an initial policy; self-play PPO trains it against itself and a pool of frozen past champions; EMA-smoothed weights leave the loop and are exported to a numpy-only bot.">
+  <figcaption><span class="fig-number">FIG. 02</span> From human replays to a bot on stdin. Blue is the on-policy loop, red is adversarial pressure, and the weights that leave the loop are never the live ones — they are an exponential moving average, which evaluates measurably better than the noisy iterate it shadows.</figcaption>
+</figure>
+
+Two smaller decisions are load-bearing. Draws are punished at −0.5: with terminal-only rewards and no discounting, a draw was free, a slow win scored the same as a fast one, and the policy quietly drifted into dawdling. And only the top 25% of advantages contribute to the update, which concentrates the gradient on the moves that actually distinguished a win from a loss.
+
+Measuring progress is now the hard part. The scripted ladder — expander, harvester, hunter — is saturated at 97–100% and no longer resolves anything. Only two evaluations still move: head-to-head against the bot's own ancestors, and games against EklipZ, the strongest open-source generals bot, which the champion beats about 15% of the time under classic rules and 11% under competition rules. That gap is the project.
+
+## What ships
+
+The competition evaluator runs bots as subprocesses over stdin and stdout: a handshake, then per turn five scalars and three grids in, and one line of `kind row col dir split` out. It will not have JAX, so nothing JAX-shaped can cross the line.
+
+So the champion is exported to a flat `weights.npz`, and the entire forward pass — convolutions, group norms, the pooled global injections, the observation augmentation, the fog memory, and the build-cost mask — is re-implemented in about 350 lines of numpy, checked against the JAX model for exact agreement. The bot takes the argmax rather than sampling, and wraps every turn in a `try` that falls back to a pass move: a crash forfeits the game, so it does not crash.
+
+<div class="table-wrap">
+
+| Network | | Optimisation | |
+|---|---|---|---|
+| Parameters | 2.72 M | Envs × steps | 128 × 128 |
+| Trunk | 6 × ResBlock, width 192 | Minibatch / epochs | 1 024 / 1 |
+| Global injects | after blocks 3 and 5 | γ, λ | 1.0, 0.7 |
+| Input channels | 38 = 24 + 2 × 7 history | Clip, target KL | 0.2, 0.02 |
+| Canvas | 21 × 21, padded | Advantage fraction | top 25% |
+| Action space | 10 × 21 × 21 = 4 410 | LR, power law | 1e-4 → 5e-6 |
+| Value head | 128 HL-Gauss bins, ±1.6 | Entropy coefficient | 0.05 → 0.001 |
+| Rollout precision | bfloat16 | EMA decay | 0.999 |
+
+</div>
+
+Everything else — the reward-hacking forensics, the profiler traces, the five-hour run that learnt nothing at all — lives in the field notes below.
