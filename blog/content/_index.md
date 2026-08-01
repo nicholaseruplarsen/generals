@@ -24,7 +24,9 @@ It is deliberately small. An earlier transformer policy with far more capacity l
 
 ## The network
 
-A convolution only sees its own neighbourhood, and generals.io is a game about the whole board — where the enemy general probably is, who is ahead on income, whether it is time to expand or to push. So the trunk is a plain residual CNN, and twice on the way through, a vector pooled from *every* tile is broadcast back onto *every* tile. That is the one architectural idea in the network: attention's global view, at the price of two small MLPs.
+A convolution only sees its own neighbourhood, and generals.io is a game about the whole board — where the enemy general probably is, who is ahead on income, whether it is time to expand or to push. Six 3×3 convolutions reach thirteen tiles; the board is twenty-one across. Left alone, one corner of the map is not merely poorly informed about the opposite corner, it is *causally disconnected* from it.
+
+So twice on the way through the trunk, a vector pooled from *every* tile — mean and max — goes through a small MLP and is added back onto *every* tile. That buys a global receptive field in one hop for about 8% of the parameters. It is not attention: every tile receives the same vector, so there is no per-tile routing and no way to ask about a *specific* other tile, only about the board's summary statistics. What makes it more than a constant offset is what follows it — the next block's normalisation and nonlinearity let the same broadcast vector change a big-army tile's response differently from an empty one's.
 
 Two other things are worth pointing at in the plate below. The observation is not just the current frame — a persistent per-environment state carries fog memory (what has been seen, where terrain was remembered) plus the last seven army-delta frames for each player, which is how the policy reads momentum. And the enemy's army and land totals over the last 512 turns go through their own encoder, so the network can tell a player who is quietly massing from one who is spending.
 
@@ -48,7 +50,9 @@ After that it is self-play, with one important amendment. Pure self-play plateau
 
 Two smaller decisions are load-bearing. Draws are punished at −0.5: with terminal-only rewards and no discounting, a draw was free, a slow win scored the same as a fast one, and the policy quietly drifted into dawdling. And only the top 25% of advantages contribute to the update, which concentrates the gradient on the moves that actually distinguished a win from a loss.
 
-Measuring progress is now the hard part. The scripted ladder — expander, harvester, hunter — is saturated at 97–100% and no longer resolves anything. Only two evaluations still move: head-to-head against the bot's own ancestors, and games against EklipZ, the strongest open-source generals bot, which the champion beats about 15% of the time under classic rules and 11% under competition rules. That gap is the project.
+Measuring progress is now the hard part. The scripted ladder — expander, harvester, hunter — is saturated at 97–100% and no longer resolves anything. Only two evaluations still move: head-to-head against the bot's own ancestors, and games against EklipZ, the strongest open-source generals bot. The champion takes 71% of 64 games under EklipZ's own classic ruleset, up from 16% two generations ago, and 97% under competition rules — though there EklipZ is playing a game it does not know, with no castle building and no awareness of deathtouch, so read that number as directional rather than as a fair fight.
+
+The uncomfortable part is what those two evaluations disagree about. Over forty hours of continuous training the policy went from 86% to 97% against a frozen distant ancestor, and stayed flat against EklipZ the entire time. Nothing was broken while that happened — entropy annealing normally, explained variance 0.97–0.99, KL around 0.01. The optimiser was healthy and the *signal* was exhausted: self-play was teaching the policy to beat its own lineage's habits, which is not the same skill as beating a search-based opponent. That divergence, not throughput, is the project's current problem.
 
 ## What ships
 

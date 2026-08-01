@@ -110,8 +110,8 @@
     <path class="ln" d="M807,712 L807,726" marker-end="url(#ar)"/>
     <rect class="box" x="690" y="728" width="234" height="34" rx="2"/>
     <text class="s" x="807" y="749" text-anchor="middle">Linear 384→192 · SiLU · 192</text>
-    <text class="s" x="807" y="787" text-anchor="middle">every tile sees the whole board —</text>
-    <text class="s" x="807" y="803" text-anchor="middle">what attention gives, far cheaper</text>
+    <text class="s" x="807" y="787" text-anchor="middle">one pooled vector added to every tile:</text>
+    <text class="s" x="807" y="803" text-anchor="middle">global reach, but no pairwise routing</text>
     <path class="dash" d="M630,648 L656,648 L656,690 L674,690"/>
     <path class="lnt" d="M674,704 L495,704" marker-end="url(#art)"/>
     <path class="lnt" d="M674,745 L650,745 L650,832 L495,832" marker-end="url(#art)"/>
