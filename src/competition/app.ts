@@ -1,6 +1,7 @@
 import { buildCost, createState, playerView, step, totals, visibility } from "./game";
-import { TOURNAMENT_MAP } from "./map";
+import { competitionMapAt, randomCompetitionMap } from "./map";
 import { PolicyMemory, preparePolicyInput } from "./observation";
+import { SELFPLAY_REPLAYS, type SelfplayReplay } from "./selfplay.generated";
 import {
   DIRECTIONS,
   PASS_ACTION,
@@ -14,6 +15,7 @@ import type { CompetitionWorkerResponse } from "./worker";
 import "./style.css";
 
 type Mode = "human" | "selfplay";
+const EMPTY_LOGITS = new Float32Array(4410);
 
 function select<T extends HTMLElement>(root: HTMLElement, selector: string): T {
   /** Return one required UI element or fail at startup. */
@@ -89,8 +91,10 @@ export function mountCompetitionApp(root: HTMLElement): void {
 
 class CompetitionApp {
   private mode: Mode;
-  private state = createState(TOURNAMENT_MAP, false);
-  private seats: [ChampionSeat, ChampionSeat];
+  private state = createState(randomCompetitionMap(), false);
+  private opponentSeat: ChampionSeat | null = null;
+  private selfplayReplay: SelfplayReplay = SELFPLAY_REPLAYS[0]!;
+  private selfplayCursor = 0;
   private running = true;
   private busy = false;
   private tps = 2;
@@ -127,6 +131,7 @@ class CompetitionApp {
     const params = new URLSearchParams(location.search);
     root.classList.toggle("is-embedded", params.get("embed") === "1");
     this.mode = params.get("mode") === "bots" ? "selfplay" : "human";
+    if (this.mode === "selfplay") this.loadSelfplayReplay();
     root.innerHTML = `
       <div class="competition-shell">
         <header class="competition-header">
@@ -177,7 +182,7 @@ class CompetitionApp {
     this.scoreRows = [select(root, "[data-score-row-0]"), select(root, "[data-score-row-1]")];
     this.transportFeedback = select(root, "[data-transport-feedback]");
     this.createBoardTiles();
-    this.seats = [new ChampionSeat(() => this.updateStatus()), new ChampionSeat(() => this.updateStatus())];
+    if (this.mode === "human") this.opponentSeat = new ChampionSeat(() => this.updateStatus());
     this.bindEvents();
     this.applyMode();
     this.startTimer();
@@ -219,7 +224,11 @@ class CompetitionApp {
   }
 
   private createBoardTiles(): void {
-    /** Build the competition site's square tile DOM once; renders only update state. */
+    /** Rebuild the tile DOM for the current archived map dimensions. */
+    this.board.replaceChildren();
+    this.tiles.length = 0;
+    this.tileNumbers.length = 0;
+    this.tileArrows.length = 0;
     this.board.style.setProperty("--cols", String(this.state.cols));
     this.board.style.setProperty("--rows", String(this.state.rows));
     for (let cell = 0; cell < this.state.rows * this.state.cols; cell += 1) {
@@ -263,11 +272,15 @@ class CompetitionApp {
   }
 
   private newGame(): void {
-    /** Reset the environment and replace workers so all policy memory is fresh. */
-    this.seats[0].dispose();
-    this.seats[1].dispose();
-    this.seats = [new ChampionSeat(() => this.updateStatus()), new ChampionSeat(() => this.updateStatus())];
-    this.state = createState(TOURNAMENT_MAP, false);
+    /** Reset live human play or select another offline self-play trajectory. */
+    this.opponentSeat?.dispose();
+    this.opponentSeat = null;
+    if (this.mode === "selfplay") this.loadSelfplayReplay();
+    else {
+      this.state = createState(randomCompetitionMap(), false);
+      this.opponentSeat = new ChampionSeat(() => this.updateStatus());
+    }
+    this.createBoardTiles();
     this.humanSeen.fill(0);
     this.humanMountains.fill(0);
     this.humanCastles.fill(0);
@@ -284,6 +297,15 @@ class CompetitionApp {
     this.render();
   }
 
+  private loadSelfplayReplay(): void {
+    /** Select one precomputed g08-vs-g08 trace and restore its initial state. */
+    const randomValue = new Uint32Array(1);
+    crypto.getRandomValues(randomValue);
+    this.selfplayReplay = SELFPLAY_REPLAYS[randomValue[0]! % SELFPLAY_REPLAYS.length]!;
+    this.selfplayCursor = 0;
+    this.state = createState(competitionMapAt(this.selfplayReplay.mapIndex), false);
+  }
+
   private applyMode(): void {
     /** Update labels and human-only controls for the active matchup. */
     const human = this.mode === "human";
@@ -292,10 +314,16 @@ class CompetitionApp {
     select<HTMLElement>(this.root, "[data-match-meta]").textContent = human ?
       "YOU vs G08 · live competition sandbox" : "G08 vs G08 · independent fog memories";
     this.root.classList.toggle("human-mode", human);
+    this.overlayButton.disabled = !human;
+    if (!human) {
+      this.policyOverlay = false;
+      this.overlayButton.classList.remove("active");
+    }
     this.modeButtons.forEach((button) => button.classList.toggle("active", button.dataset.mode === this.mode));
     select<HTMLElement>(this.root, "[data-action-hint]").textContent = human ?
       "Select a blue tile, then an adjacent destination. Arrow keys move · Z sends half · B builds." :
       "Two independent copies of g08 act from separate fog-memory states.";
+    this.updateStatus();
   }
 
   private startTimer(): void {
@@ -309,17 +337,28 @@ class CompetitionApp {
   private async tick(): Promise<void> {
     /** Collect simultaneous actions, step once, and redraw without overlap. */
     if (this.busy || this.state.winner !== -1) return;
-    const requiredSeats = this.mode === "human" ? [this.seats[1]] : this.seats;
-    if (!requiredSeats.every((seat) => seat.status === "ready")) return;
+    if (this.mode === "selfplay") {
+      const actions = this.selfplayReplay.actions[this.selfplayCursor];
+      if (actions === undefined) throw new Error("Self-play replay ended before the recorded terminal state");
+      this.lastDecision = [
+        { action: actions[0], actionIndex: 0, logits: EMPTY_LOGITS },
+        { action: actions[1], actionIndex: 0, logits: EMPTY_LOGITS },
+      ];
+      this.selfplayCursor += 1;
+      this.state = step(this.state, actions);
+      this.render();
+      if (this.state.winner !== -1) this.finish();
+      return;
+    }
+    const opponent = this.opponentSeat;
+    if (opponent === null || opponent.status !== "ready") return;
     this.busy = true;
     const snapshot = this.state;
     // Dequeue before asynchronous opponent inference. Inputs added while this
     // tick is in flight belong to the next tick and must remain in the queue.
     const queuedHumanAction = this.humanQueue.shift() ?? PASS_ACTION;
-    const p0 = this.mode === "human" ?
-      Promise.resolve<PolicyDecision>({ action: queuedHumanAction, actionIndex: 0, logits: new Float32Array(4410) }) :
-      this.seats[0].act(snapshot, 0);
-    const p1 = this.seats[1].act(snapshot, 1);
+    const p0 = Promise.resolve<PolicyDecision>({ action: queuedHumanAction, actionIndex: 0, logits: EMPTY_LOGITS });
+    const p1 = opponent.act(snapshot, 1);
     try {
       const decisions = await Promise.all([p0, p1]);
       this.lastDecision = decisions;
@@ -424,14 +463,21 @@ class CompetitionApp {
   }
 
   private updateStatus(): void {
-    /** Reflect both model workers' runtime state in the header. */
-    const errors = this.seats.filter((seat) => seat.status === "error");
-    if (errors.length > 0) {
-      this.status.textContent = `model error · ${errors[0]!.error}`;
+    /** Reflect replay mode or the single live opponent worker in the header. */
+    if (this.mode === "selfplay") {
+      this.status.textContent = "g08 replay ready · zero inference";
+      this.status.parentElement?.classList.add("ready");
+      return;
+    }
+    const opponent = this.opponentSeat;
+    if (opponent?.status === "error") {
+      this.status.textContent = `model error · ${opponent.error}`;
       this.status.parentElement?.classList.add("error");
-    } else if (this.seats.every((seat) => seat.status === "ready")) {
+    } else if (opponent?.status === "ready") {
       this.status.textContent = "g08 ready · exact ONNX export";
       this.status.parentElement?.classList.add("ready");
+    } else {
+      this.status.textContent = "loading 2.72M parameters…";
     }
   }
 

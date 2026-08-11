@@ -1,3 +1,4 @@
+import { REAL_COMPETITION_MAPS } from "./maps.generated";
 import type { CompetitionMap } from "./types";
 
 /** Official 21×18 tournament map from live match #198316. */
@@ -17,3 +18,17 @@ export const TOURNAMENT_MAP: CompetitionMap = {
   ],
   generals: [[19, 14], [2, 8]],
 };
+
+export function randomCompetitionMap(): CompetitionMap {
+  /** Select a real archived tournament map without procedural generation. */
+  const randomValue = new Uint32Array(1);
+  crypto.getRandomValues(randomValue);
+  return REAL_COMPETITION_MAPS[randomValue[0]! % REAL_COMPETITION_MAPS.length]!;
+}
+
+export function competitionMapAt(index: number): CompetitionMap {
+  /** Resolve the archived map referenced by an offline self-play trace. */
+  const map = REAL_COMPETITION_MAPS[index];
+  if (map === undefined) throw new Error(`Missing archived competition map ${index}`);
+  return map;
+}
