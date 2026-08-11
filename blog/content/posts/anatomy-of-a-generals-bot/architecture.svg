@@ -1,0 +1,175 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1382" role="img" aria-labelledby="t d">
+  <title id="t">The GlobalContextCNN policy network</title>
+  <desc id="d">A fog-of-war observation is augmented into 38 planes, projected to width 192, passed through six residual convolution blocks with two global-context injections and a temporal opponent-history branch, then decoded per tile into ten action planes and a distributional value.</desc>
+  <rect width="960" height="1382" fill="#fff"/>
+  <style>
+    .k{font:11px ui-monospace,monospace;letter-spacing:2px;fill:#6b6b62}
+    .b{font:600 13.5px system-ui,sans-serif;fill:#171714}
+    .s{font:11.5px system-ui,sans-serif;fill:#55554d}
+    .m{font:11.5px ui-monospace,monospace;fill:#315cff}
+    .o{font:600 15px system-ui,sans-serif;fill:#171714}
+    .box{fill:#fff;stroke:#d2cec0;stroke-width:1.3}
+    .blue{fill:#eff2ff;stroke:#315cff;stroke-width:1.3}
+    .red{fill:#fdece9;stroke:#f04f3d;stroke-width:1.3}
+    .panel{fill:#f4f1e8;stroke:#d2cec0;stroke-width:1.3}
+    .ghost{fill:#fff;stroke:#c3bfb1;stroke-width:1.3;stroke-dasharray:5 4}
+    .ln{stroke:#5c5c54;stroke-width:1.5;fill:none}
+    .lnt{stroke:#189a92;stroke-width:1.6;fill:none}
+    .dash{fill:none;stroke:#b9b4a6;stroke-width:1.3;stroke-dasharray:4 4}
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="8" markerHeight="7" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#5c5c54"/></marker>
+    <marker id="art" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="8" markerHeight="7" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#189a92"/></marker>
+  </defs>
+
+  <text x="20" y="34" class="k">FIGURE 01 / ONE TICK THROUGH THE CHAMPION</text>
+
+  <g transform="translate(0,44)">
+    <!-- temporal encoder -->
+    <rect class="panel" x="20" y="186" width="252" height="226" rx="3"/>
+    <text class="k" x="36" y="210">TEMPORAL ENCODER</text>
+    <rect class="box" x="36" y="224" width="220" height="34" rx="2"/>
+    <text class="s" x="140" y="245" text-anchor="middle">opponent army history</text>
+    <text class="m" x="248" y="245" text-anchor="end">(512)</text>
+    <rect class="box" x="36" y="266" width="220" height="34" rx="2"/>
+    <text class="s" x="140" y="287" text-anchor="middle">opponent land history</text>
+    <text class="m" x="248" y="287" text-anchor="end">(512)</text>
+    <path class="ln" d="M146,300 L146,316" marker-end="url(#ar)"/>
+    <rect class="blue" x="36" y="318" width="220" height="46" rx="2"/>
+    <text class="b" x="146" y="337" text-anchor="middle">2 × MLP 512→256→192</text>
+    <text class="s" x="146" y="354" text-anchor="middle">SiLU, summed</text>
+    <text class="m" x="146" y="386" text-anchor="middle">(192,) broadcast to all cells</text>
+    <path class="lnt" d="M272,399 L300,399 L300,406 L464,406" marker-end="url(#art)"/>
+
+    <!-- main column -->
+    <rect class="box" x="330" y="30" width="300" height="52" rx="2"/>
+    <text class="b" x="480" y="52" text-anchor="middle">Observation · fog of war</text>
+    <text class="s" x="480" y="70" text-anchor="middle">generals-bots engine · 18–21 tiles per axis</text>
+    <path class="ln" d="M480,82 L480,102" marker-end="url(#ar)"/>
+
+    <rect class="box" x="330" y="104" width="300" height="40" rx="2"/>
+    <text class="b" x="480" y="129" text-anchor="middle">obs_to_array</text>
+    <text class="m" x="644" y="129">14 × H × W</text>
+    <path class="ln" d="M480,144 L480,166" marker-end="url(#ar)"/>
+
+    <rect class="box" x="330" y="168" width="300" height="58" rx="2"/>
+    <text class="b" x="480" y="190" text-anchor="middle">augment_obs · persistent per-env state</text>
+    <text class="s" x="480" y="207" text-anchor="middle">seen / enemy-seen memory · remembered terrain</text>
+    <text class="s" x="480" y="221" text-anchor="middle">+ 7 own &amp; 7 enemy army-delta frames</text>
+    <text class="m" x="644" y="197">38 × 21 × 21</text>
+    <path class="ln" d="M480,226 L480,248" marker-end="url(#ar)"/>
+
+    <rect class="box" x="330" y="250" width="300" height="38" rx="2"/>
+    <text class="b" x="480" y="274" text-anchor="middle">normalise ÷ 50 · pad to 21 × 21</text>
+    <path class="ln" d="M480,288 L480,312" marker-end="url(#ar)"/>
+
+    <rect class="blue" x="330" y="314" width="300" height="42" rx="2"/>
+    <text class="b" x="480" y="340" text-anchor="middle">stem — Conv 1×1, 38 → 192</text>
+    <path class="ln" d="M480,356 L480,390" marker-end="url(#ar)"/>
+
+    <circle cx="480" cy="406" r="14" class="box"/>
+    <text class="o" x="480" y="412" text-anchor="middle">+</text>
+    <path class="ln" d="M480,420 L480,442" marker-end="url(#ar)"/>
+
+    <rect class="blue" x="330" y="444" width="300" height="48" rx="2"/>
+    <text class="b" x="480" y="466" text-anchor="middle">coord_proj — Conv 1×1, 194 → 192</text>
+    <text class="s" x="480" y="484" text-anchor="middle">concat 2 normalised coordinate planes</text>
+    <path class="ln" d="M480,492 L480,514" marker-end="url(#ar)"/>
+
+    <!-- trunk -->
+    <rect class="panel" x="330" y="516" width="300" height="384" rx="3"/>
+    <text class="k" x="346" y="540">RESIDUAL TRUNK · ×6</text>
+    <rect class="box" x="350" y="552" width="260" height="36" rx="2"/>
+    <text class="s" x="480" y="575" text-anchor="middle">GroupNorm(8) → SiLU → Conv 3×3 ⊕</text>
+    <rect class="box" x="350" y="600" width="260" height="36" rx="2"/>
+    <text class="s" x="480" y="623" text-anchor="middle">GroupNorm(8) → SiLU → Conv 3×3 ⊕</text>
+    <rect class="box" x="350" y="648" width="260" height="36" rx="2"/>
+    <text class="s" x="480" y="671" text-anchor="middle">GroupNorm(8) → SiLU → Conv 3×3 ⊕</text>
+    <path class="ln" d="M480,684 L480,690"/>
+    <circle cx="480" cy="704" r="13" style="fill:#e7f8f6;stroke:#189a92;stroke-width:1.3"/>
+    <text class="o" x="480" y="710" text-anchor="middle">+</text>
+    <path class="ln" d="M480,717 L480,726" marker-end="url(#ar)"/>
+    <rect class="box" x="350" y="728" width="260" height="36" rx="2"/>
+    <text class="s" x="480" y="751" text-anchor="middle">GroupNorm(8) → SiLU → Conv 3×3 ⊕</text>
+    <rect class="box" x="350" y="776" width="260" height="36" rx="2"/>
+    <text class="s" x="480" y="799" text-anchor="middle">GroupNorm(8) → SiLU → Conv 3×3 ⊕</text>
+    <path class="ln" d="M480,812 L480,818"/>
+    <circle cx="480" cy="832" r="13" style="fill:#e7f8f6;stroke:#189a92;stroke-width:1.3"/>
+    <text class="o" x="480" y="838" text-anchor="middle">+</text>
+    <path class="ln" d="M480,845 L480,854" marker-end="url(#ar)"/>
+    <rect class="box" x="350" y="856" width="260" height="36" rx="2"/>
+    <text class="s" x="480" y="879" text-anchor="middle">GroupNorm(8) → SiLU → Conv 3×3 ⊕</text>
+    <path class="ln" d="M480,900 L480,924" marker-end="url(#ar)"/>
+
+    <!-- global inject -->
+    <rect class="panel" x="674" y="640" width="266" height="186" rx="3"/>
+    <text class="k" x="690" y="664">GLOBAL INJECT · ×2</text>
+    <rect class="box" x="690" y="678" width="234" height="34" rx="2"/>
+    <text class="s" x="800" y="699" text-anchor="middle">mean ⊕ max over 21×21</text>
+    <text class="m" x="916" y="699" text-anchor="end">(384)</text>
+    <path class="ln" d="M807,712 L807,726" marker-end="url(#ar)"/>
+    <rect class="box" x="690" y="728" width="234" height="34" rx="2"/>
+    <text class="s" x="807" y="749" text-anchor="middle">Linear 384→192 · SiLU · 192</text>
+    <text class="s" x="807" y="787" text-anchor="middle">one pooled vector added to every tile:</text>
+    <text class="s" x="807" y="803" text-anchor="middle">global reach, but no pairwise routing</text>
+    <path class="dash" d="M630,648 L656,648 L656,690 L674,690"/>
+    <path class="lnt" d="M674,704 L495,704" marker-end="url(#art)"/>
+    <path class="lnt" d="M674,745 L650,745 L650,832 L495,832" marker-end="url(#art)"/>
+
+    <rect class="blue" x="330" y="926" width="300" height="40" rx="2"/>
+    <text class="b" x="480" y="951" text-anchor="middle">GroupNorm(8) → SiLU</text>
+
+    <path class="ln" d="M480,966 L480,990 L300,990 L300,1004" marker-end="url(#ar)"/>
+    <path class="ln" d="M480,966 L480,990 L660,990 L660,1004" marker-end="url(#ar)"/>
+
+    <!-- policy head -->
+    <text class="k" x="150" y="978">POLICY HEAD</text>
+    <rect class="blue" x="150" y="1006" width="300" height="44" rx="2"/>
+    <text class="b" x="300" y="1027" text-anchor="middle">policy_head — Linear 192 → 10</text>
+    <text class="s" x="300" y="1043" text-anchor="middle">applied at each of the 441 tiles</text>
+    <path class="ln" d="M300,1050 L300,1072" marker-end="url(#ar)"/>
+    <rect class="red" x="150" y="1074" width="300" height="44" rx="2"/>
+    <text class="b" x="300" y="1095" text-anchor="middle">+ legality mask</text>
+    <text class="s" x="300" y="1111" text-anchor="middle">−1e9 on illegal move · unaffordable build</text>
+    <path class="ln" d="M300,1118 L300,1140" marker-end="url(#ar)"/>
+    <rect class="box" x="150" y="1142" width="300" height="38" rx="2"/>
+    <text class="b" x="300" y="1166" text-anchor="middle">flatten → 4 410 logits</text>
+    <path class="ln" d="M300,1180 L300,1202" marker-end="url(#ar)"/>
+    <rect class="box" x="150" y="1204" width="300" height="44" rx="2"/>
+    <text class="b" x="300" y="1225" text-anchor="middle">categorical sample · argmax</text>
+    <text class="s" x="300" y="1241" text-anchor="middle">rollouts sample · the submission argmaxes</text>
+
+    <!-- value head -->
+    <text class="k" x="510" y="978">VALUE HEAD · TRAINING ONLY</text>
+    <rect class="ghost" x="510" y="1006" width="300" height="44" rx="2"/>
+    <text class="b" x="660" y="1027" text-anchor="middle">mean ⊕ max pool</text>
+    <text class="s" x="660" y="1043" text-anchor="middle">the same global vector, at the trunk exit</text>
+    <path class="ln" d="M660,1050 L660,1072" marker-end="url(#ar)"/>
+    <rect class="ghost" x="510" y="1074" width="300" height="44" rx="2"/>
+    <text class="b" x="660" y="1095" text-anchor="middle">Linear 384 → 192 → SiLU</text>
+    <text class="s" x="660" y="1111" text-anchor="middle">value_l1</text>
+    <path class="ln" d="M660,1118 L660,1140" marker-end="url(#ar)"/>
+    <rect class="ghost" x="510" y="1142" width="300" height="38" rx="2"/>
+    <text class="b" x="660" y="1166" text-anchor="middle">value_head → 128 bins</text>
+    <path class="ln" d="M660,1180 L660,1202" marker-end="url(#ar)"/>
+    <rect class="ghost" x="510" y="1204" width="300" height="44" rx="2"/>
+    <text class="b" x="660" y="1225" text-anchor="middle">v = Σ softmax · centres</text>
+    <text class="s" x="660" y="1241" text-anchor="middle">HL-Gauss classification · v ∈ [−1.6, 1.6]</text>
+
+    <!-- action planes -->
+    <text class="k" x="150" y="1288">THE TEN PLANES AT EVERY TILE</text>
+    <rect class="box" x="150" y="1298" width="26" height="24" rx="2"/><text class="s" x="163" y="1315" text-anchor="middle">↑</text>
+    <rect class="box" x="178" y="1298" width="26" height="24" rx="2"/><text class="s" x="191" y="1315" text-anchor="middle">↓</text>
+    <rect class="box" x="206" y="1298" width="26" height="24" rx="2"/><text class="s" x="219" y="1315" text-anchor="middle">←</text>
+    <rect class="box" x="234" y="1298" width="26" height="24" rx="2"/><text class="s" x="247" y="1315" text-anchor="middle">→</text>
+    <text class="s" x="268" y="1315">full army</text>
+    <rect class="box" x="330" y="1298" width="26" height="24" rx="2"/><text class="s" x="343" y="1315" text-anchor="middle">↑</text>
+    <rect class="box" x="358" y="1298" width="26" height="24" rx="2"/><text class="s" x="371" y="1315" text-anchor="middle">↓</text>
+    <rect class="box" x="386" y="1298" width="26" height="24" rx="2"/><text class="s" x="399" y="1315" text-anchor="middle">←</text>
+    <rect class="box" x="414" y="1298" width="26" height="24" rx="2"/><text class="s" x="427" y="1315" text-anchor="middle">→</text>
+    <text class="s" x="448" y="1315">half (split)</text>
+    <rect class="box" x="524" y="1298" width="52" height="24" rx="2"/><text class="s" x="550" y="1315" text-anchor="middle">pass</text>
+    <rect class="blue" x="584" y="1298" width="56" height="24" rx="2"/><text class="s" x="612" y="1315" text-anchor="middle">build</text>
+    <text class="s" x="650" y="1315">castle — 35 armies + crowding surcharge</text>
+  </g>
+</svg>
