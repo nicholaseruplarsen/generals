@@ -4,5 +4,6 @@ _site/
 blog/public/
 blog/resources/
 .worktrees/
+tmp/
 *.log
 .DS_Store

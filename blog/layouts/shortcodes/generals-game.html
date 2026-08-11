@@ -1,6 +1,5 @@
 {{- /*
-  Embeds the playable generals web app (the ~/Desktop/generals repo, deployed
-  at /generals/ next to this blog) as a static, centered demo.
+  Embeds the exact g08 competition policy in the local tournament simulator.
 
   Params:
     mode  — "human" (default, play vs the champion) or "bots" (spectate)
@@ -11,120 +10,86 @@
 {{- /* hugo server: the game isn't built yet, use the vite dev server */ -}}
 {{- $default := cond hugo.IsServer "http://localhost:5173/generals/play/" (relURL "play/") -}}
 {{- $base := .Get "src" | default (site.Params.gameURL | default $default) -}}
-{{- $src := printf "%s?embed=1%s" $base (cond (eq $mode "bots") "&mode=bots" "") -}}
+{{- $src := printf "%s?embed=1&ui=competition-v9%s" $base (cond (eq $mode "bots") "&mode=bots" "") -}}
 <figure class="generals-game">
+  <div class="gg-heading">
+    <span>FIGURE 1 · LIVE POLICY</span>
+    <strong>Play the submitted agent—or let it play itself.</strong>
+  </div>
   <div class="gg-frame">
-    <iframe src="{{ $src }}" title="generals — play against the trained bot" loading="eager"></iframe>
-    <div class="gg-toolbar">
-      <span class="gg-hint">arrows / WASD to move &nbsp;·&nbsp; Z split &nbsp;·&nbsp; E undo &nbsp;·&nbsp; Q clear queue</span>
-      <span class="gg-actions">
-        <button class="gg-dock" type="button">Minimize ↘</button>
-        <a href="{{ $base }}" target="_blank" rel="noopener">Fullscreen ⛶</a>
-      </span>
-    </div>
+    <iframe src="{{ $src }}" title="generals — play against the trained bot" loading="eager" scrolling="no"></iframe>
   </div>
-  <div class="gg-placeholder" hidden>
-    <span>Game minimized to the corner — it keeps playing while you read.</span>
-    <button class="gg-restore" type="button">Maximize</button>
-  </div>
+  <figcaption class="gg-caption">
+    <span><b>G08 · 2.72M PARAMETERS</b> The exact exported policy, running locally in your browser.</span>
+    <span class="gg-actions"><a href="{{ $base }}" target="_blank" rel="noopener">Open full screen ↗</a></span>
+  </figcaption>
 </figure>
 
 <style>
   .generals-game {
-    margin: 0 auto 48px;
-    max-width: 640px;
+    position: relative;
+    left: 50%;
+    width: min(600px, calc(100vw - 32px));
+    margin: 64px 0 24px;
+    transform: translateX(-50%);
   }
+  .generals-game .gg-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 0 0 14px;
+    border-bottom: 1px solid #b9b8b1;
+  }
+  .generals-game .gg-heading span { color: #315cff; font: 500 10px/1.4 var(--mono, monospace); letter-spacing: .1em; }
+  .generals-game .gg-heading strong { font: 400 20px/1.25 var(--serif, serif); }
   .generals-game .gg-frame {
-    background: #222;
-    border: 1px solid #333;
-    border-radius: 6px;
+    background: transparent;
     overflow: hidden;
-    box-shadow: 0 14px 44px rgba(0, 0, 0, 0.18);
   }
   .generals-game iframe {
     display: block;
     width: 100%;
-    height: 715px;
+    height: 830px;
     border: 0;
   }
-  .generals-game .gg-toolbar {
+  .generals-game .gg-caption {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: baseline;
     gap: 14px;
-    padding: 9px 14px;
-    background: #1b1b1b;
-    font: 500 12px/1.4 var(--mono, monospace);
+    margin: 0;
+    padding: 13px 0 0;
+    border-top: 1px solid #b9b8b1;
+    color: #777872;
+    font: 400 10px/1.5 var(--mono, monospace);
   }
-  .generals-game .gg-hint { color: #8a8a8a; }
+  .generals-game .gg-caption b { color: #258d4e; font-weight: 500; }
   .generals-game .gg-actions {
     display: flex;
     align-items: center;
     gap: 14px;
     white-space: nowrap;
   }
-  .generals-game .gg-toolbar a,
-  .generals-game .gg-toolbar button {
+  .generals-game .gg-caption a,
+  .generals-game .gg-caption button {
     background: none;
     border: 0;
     padding: 0;
-    color: #9a9a9a;
+    color: #555;
     text-decoration: none;
     cursor: pointer;
     font: inherit;
   }
-  .generals-game .gg-toolbar a:hover,
-  .generals-game .gg-toolbar button:hover { color: #23a29e; }
-  /* Minimized: the frame docks to the corner via CSS only — the iframe is
-     never re-parented, so the game keeps running. */
-  .generals-game.gg-docked .gg-frame {
-    position: fixed;
-    right: 18px;
-    bottom: 18px;
-    width: 340px;
-    z-index: 80;
-    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+  .generals-game .gg-caption a:hover,
+  .generals-game .gg-caption button:hover { color: #315cff; }
+  @media (max-width: 980px) {
+    .generals-game { left: 50%; transform: translateX(-50%); }
   }
-  .generals-game.gg-docked iframe { height: 490px; }
-  .generals-game.gg-docked .gg-hint { display: none; }
-  .generals-game .gg-placeholder {
-    display: none;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 18px 20px;
-    border: 1px dashed #c8c8c0;
-    border-radius: 6px;
-    color: #777;
-    font: 400 13px/1.5 var(--mono, monospace);
+  @media (max-width: 680px) {
+    .generals-game { width: calc(100vw - 24px); left: 50%; transform: translateX(-50%); }
+    .generals-game iframe { height: 780px; }
+    .generals-game .gg-heading { align-items: flex-start; flex-direction: column; gap: 6px; }
+    .generals-game .gg-caption { align-items: flex-start; flex-direction: column; }
   }
-  .generals-game.gg-docked .gg-placeholder { display: flex; }
-  .generals-game .gg-placeholder button {
-    background: none;
-    border: 1px solid #b9b9b2;
-    border-radius: 4px;
-    padding: 6px 12px;
-    cursor: pointer;
-    font: inherit;
-    color: #555;
-  }
-  .generals-game .gg-placeholder button:hover { border-color: #23a29e; color: #23a29e; }
 </style>
-
-<script>
-  (() => {
-    document.querySelectorAll(".generals-game").forEach((fig) => {
-      if (fig.dataset.ggInit) return;
-      fig.dataset.ggInit = "1";
-      const placeholder = fig.querySelector(".gg-placeholder");
-      const dock = fig.querySelector(".gg-dock");
-      const toggle = (docked) => {
-        fig.classList.toggle("gg-docked", docked);
-        placeholder.hidden = !docked;
-        dock.textContent = docked ? "Maximize ↖" : "Minimize ↘";
-      };
-      dock.addEventListener("click", () => toggle(!fig.classList.contains("gg-docked")));
-      fig.querySelector(".gg-restore").addEventListener("click", () => toggle(false));
-    });
-  })();
-</script>

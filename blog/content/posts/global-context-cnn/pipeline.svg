@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 700" role="img" aria-labelledby="title desc">
+<title id="title">Training pipeline: behavioral cloning, build-head reset, self-play PPO</title>
+<desc id="desc">Three stages: cloning on 4.5 million samples with build logits masked; near-zero re-initialization of the build row of the policy head; self-play PPO on the competition ruleset at 10.6k steps per second on one RTX 4070.</desc>
+<rect width="1400" height="700" fill="#161b22"/>
+
+<rect x="70" y="150" width="380" height="400" rx="10" fill="#202731" stroke="#5dd9d0" stroke-width="2"/>
+<text x="98" y="206" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="19" fill="#5dd9d0" letter-spacing="2">STAGE 1</text>
+<text x="98" y="248" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="21" fill="#e8e6df">BEHAVIORAL CLONING</text>
+<text x="98" y="300" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5">~2.24M samples / epoch ×2</text>
+<text x="98" y="330" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5">train top-1 0.667</text>
+<text x="98" y="360" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5">held-out 0.609</text>
+<text x="98" y="390" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5"></text>
+<text x="98" y="420" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5">build logits masked:</text>
+<text x="98" y="450" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5">zero gradient reaches</text>
+<text x="98" y="480" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5">the build row</text>
+<rect x="510" y="150" width="380" height="400" rx="10" fill="#202731" stroke="#d8ff43" stroke-width="2"/>
+<text x="538" y="206" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="19" fill="#d8ff43" letter-spacing="2">STAGE 2</text>
+<text x="538" y="248" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="21" fill="#e8e6df">BUILD-HEAD RESET</text>
+<text x="538" y="300" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5">policy_head row 9 (build)</text>
+<text x="538" y="330" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5">re-initialized to ~0</text>
+<text x="538" y="360" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5"></text>
+<text x="538" y="390" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5">PPO starts agnostic —</text>
+<text x="538" y="420" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5">raises build probability</text>
+<text x="538" y="450" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5">only where it pays</text>
+<rect x="950" y="150" width="380" height="400" rx="10" fill="#202731" stroke="#315cff" stroke-width="2"/>
+<text x="978" y="206" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="19" fill="#315cff" letter-spacing="2">STAGE 3</text>
+<text x="978" y="248" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="21" fill="#e8e6df">SELF-PLAY PPO</text>
+<text x="978" y="300" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5">competition ruleset · 21×21</text>
+<text x="978" y="330" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5">128 envs × 128 steps</text>
+<text x="978" y="360" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5">γ=1.0 · GAE λ=0.7 · KL 0.02</text>
+<text x="978" y="390" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5">top-quartile advantages</text>
+<text x="978" y="420" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5">2,000 iters ≈ 51 min</text>
+<text x="978" y="450" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5">10.6k steps/s · one 4070</text>
+<text x="978" y="480" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5"></text>
+<text x="978" y="510" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5">smoke eval: 32/32 vs random</text>
+<line x1="450" y1="350" x2="510" y2="350" stroke="#8c96a5" stroke-width="3"/><polygon points="510,350 494,341 494,359" fill="#8c96a5"/>
+<line x1="890" y1="350" x2="950" y2="350" stroke="#8c96a5" stroke-width="3"/><polygon points="950,350 934,341 934,359" fill="#8c96a5"/>
+<text x="700" y="620" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="17" fill="#8c96a5">one checkpoint in → competition-ruleset policy out, overnight, on a desktop</text>
+</svg>

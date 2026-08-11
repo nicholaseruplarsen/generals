@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 980" role="img" aria-labelledby="title desc">
+<title id="title">GlobalContextCNN architecture</title>
+<desc id="desc">Pipeline: 38-channel observation through a 1x1 stem, temporal and coordinate injection, six residual conv blocks with global-context injection after the third and fifth, splitting into per-cell policy logits and a distributional value head.</desc>
+<rect width="1400" height="980" fill="#161b22"/>
+
+<rect x="60" y="380" width="130" height="180" rx="6" fill="#202731" stroke="#5dd9d0" stroke-width="1.5" opacity="0.5"/>
+<rect x="74" y="366" width="130" height="180" rx="6" fill="#202731" stroke="#5dd9d0" stroke-width="1.5" opacity="0.75"/>
+<rect x="88" y="352" width="130" height="180" rx="6" fill="#202731" stroke="#5dd9d0" stroke-width="1.5" opacity="1.0"/>
+<text x="130" y="610" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" fill="#5dd9d0">OBS (38, 21, 21)</text>
+<text x="130" y="638" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#8c96a5">24 base + 2×7 army-Δ history</text>
+<line x1="245" y1="470" x2="285" y2="470" stroke="#8c96a5" stroke-width="2.5"/><polygon points="285,470 275.0,474.5 275.0,465.5" fill="#8c96a5"/>
+<rect x="285" y="400" width="150" height="140" rx="8" fill="#202731" stroke="#5dd9d0" stroke-width="1.5"/><text x="360.0" y="434" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" fill="#5dd9d0">STEM</text><text x="360.0" y="460" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5">1×1 conv 38→192</text>
+<line x1="435" y1="470" x2="468" y2="470" stroke="#8c96a5" stroke-width="2.5"/><polygon points="468,470 458.0,474.5 458.0,465.5" fill="#8c96a5"/>
+<rect x="300" y="130" width="340" height="110" rx="8" fill="#202731" stroke="#d8ff43" stroke-width="1.5"/><text x="470.0" y="164" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" fill="#d8ff43">TEMPORAL (2, 512)</text><text x="470.0" y="190" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5">opp army &amp; land tape</text>
+<line x1="470" y1="240" x2="470" y2="436" stroke="#d8ff43" stroke-width="2.5"/><polygon points="470,436 465.5,426.0 474.5,426.0" fill="#d8ff43"/>
+<circle cx="490" cy="470" r="22" fill="#161b22" stroke="#d8ff43" stroke-width="2.5"/><text x="490" y="478" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="22" fill="#d8ff43">+</text>
+<text x="490" y="522" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#8c96a5">2×MLP(512→256→192) → +broadcast</text>
+<line x1="470" y1="436" x2="470" y2="470" stroke="#d8ff43" stroke-width="2.5"/><line x1="470" y1="470" x2="468" y2="470" stroke="#d8ff43" stroke-width="2.5"/>
+<line x1="512" y1="470" x2="560" y2="470" stroke="#8c96a5" stroke-width="2.5"/><polygon points="560,470 550.0,474.5 550.0,465.5" fill="#8c96a5"/>
+<rect x="300" y="770" width="340" height="90" rx="8" fill="#202731" stroke="#5dd9d0" stroke-width="1.5"/><text x="470.0" y="804" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" fill="#5dd9d0">COORDS (2, 21, 21)</text><text x="470.0" y="830" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5">linspace −1..1 · concat + 1×1 conv</text>
+<path d="M470 770 V612 H600 V588" fill="none" stroke="#5dd9d0" stroke-width="2.5"/><polygon points="600,586 593,600 607,600" fill="#5dd9d0"/>
+<rect x="544" y="360" width="560" height="220" rx="10" fill="none" stroke="#414b5a" stroke-dasharray="8 8"/>
+<text x="558" y="392" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#8c96a5" letter-spacing="1">TRUNK ×6 · GN → SiLU → 3×3 conv → +residual</text>
+<rect x="560" y="424" width="76" height="92" rx="8" fill="#202731" stroke="#315cff" stroke-width="1.5"/>
+<text x="598" y="476" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" fill="#315cff">R1</text>
+<line x1="636" y1="470" x2="652" y2="470" stroke="#315cff" stroke-width="2"/><polygon points="652,470 642.0,474.5 642.0,465.5" fill="#315cff"/>
+<rect x="652" y="424" width="76" height="92" rx="8" fill="#202731" stroke="#315cff" stroke-width="1.5"/>
+<text x="690" y="476" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" fill="#315cff">R2</text>
+<line x1="728" y1="470" x2="744" y2="470" stroke="#315cff" stroke-width="2"/><polygon points="744,470 734.0,474.5 734.0,465.5" fill="#315cff"/>
+<rect x="744" y="424" width="76" height="92" rx="8" fill="#202731" stroke="#315cff" stroke-width="1.5"/>
+<text x="782" y="476" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" fill="#315cff">R3</text>
+<line x1="820" y1="470" x2="836" y2="470" stroke="#315cff" stroke-width="2"/><polygon points="836,470 826.0,474.5 826.0,465.5" fill="#315cff"/>
+<rect x="836" y="424" width="76" height="92" rx="8" fill="#202731" stroke="#315cff" stroke-width="1.5"/>
+<text x="874" y="476" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" fill="#315cff">R4</text>
+<line x1="912" y1="470" x2="928" y2="470" stroke="#315cff" stroke-width="2"/><polygon points="928,470 918.0,474.5 918.0,465.5" fill="#315cff"/>
+<rect x="928" y="424" width="76" height="92" rx="8" fill="#202731" stroke="#315cff" stroke-width="1.5"/>
+<text x="966" y="476" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" fill="#315cff">R5</text>
+<line x1="1004" y1="470" x2="1020" y2="470" stroke="#315cff" stroke-width="2"/><polygon points="1020,470 1010.0,474.5 1010.0,465.5" fill="#315cff"/>
+<rect x="1020" y="424" width="76" height="92" rx="8" fill="#202731" stroke="#315cff" stroke-width="1.5"/>
+<text x="1058" y="476" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" fill="#315cff">R6</text>
+<polygon points="782,536 808,562 782,588 756,562" fill="#d8ff43"/>
+<text x="782" y="567" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#161b22">INJ</text>
+<line x1="782" y1="516" x2="782" y2="536" stroke="#d8ff43" stroke-width="2"/>
+<polygon points="966,536 992,562 966,588 940,562" fill="#d8ff43"/>
+<text x="966" y="567" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#161b22">INJ</text>
+<line x1="966" y1="516" x2="966" y2="536" stroke="#d8ff43" stroke-width="2"/>
+<text x="840" y="626" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#d8ff43">GLOBALINJECT after R3, R5: mean+max pool → MLP → broadcast-add</text>
+<text x="1094" y="392" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8c96a5">out: GN+SiLU</text>
+<rect x="1160" y="310" width="200" height="130" rx="8" fill="#202731" stroke="#315cff" stroke-width="1.5"/><text x="1260.0" y="344" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" fill="#315cff">POLICY HEAD</text><text x="1260.0" y="370" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5">vmap Linear 192→10</text>
+<text x="1260" y="462" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#8c96a5">(10,21,21) + mask → 4,410</text>
+<rect x="1160" y="510" width="200" height="130" rx="8" fill="#202731" stroke="#5dd9d0" stroke-width="1.5"/><text x="1260.0" y="544" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" fill="#5dd9d0">VALUE HEAD</text><text x="1260.0" y="570" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#8c96a5">mean+max → 128 bins</text>
+<text x="1260" y="662" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" fill="#8c96a5">softmax · bin-centers → E[v]</text>
+<line x1="1096" y1="470" x2="1156" y2="375" stroke="#315cff" stroke-width="2.5"/><polygon points="1156,375 1154.4,385.9 1146.8,381.1" fill="#315cff"/>
+<line x1="1096" y1="470" x2="1156" y2="575" stroke="#5dd9d0" stroke-width="2.5"/><polygon points="1156,575 1147.1,568.5 1154.9,564.1" fill="#5dd9d0"/>
+</svg>

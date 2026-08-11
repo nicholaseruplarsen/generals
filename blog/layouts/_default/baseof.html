@@ -8,6 +8,10 @@
   <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
   {{ $style := resources.Get "css/main.css" | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $style.RelPermalink }}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
 </head>
 <body>
   <header class="site-header">
@@ -22,5 +26,7 @@
     <span>Built in public from measured games, failed runs, and profiler traces.</span>
     <a href="https://github.com/nicholaseruplarsen/generals-bots">Source</a>
   </footer>
+  {{ $report := resources.Get "js/research-report.js" | minify | fingerprint }}
+  <script src="{{ $report.RelPermalink }}" defer></script>
 </body>
 </html>

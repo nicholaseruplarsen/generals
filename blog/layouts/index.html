@@ -19,20 +19,22 @@
     <main class="article-body">
       {{ .Content }}
 
-      <div class="eyebrow" id="field-notes" style="margin-top: 72px;">FIELD NOTES</div>
-      <div class="post-grid" style="margin-top: 0;">
-      {{ range site.RegularPages.ByDate.Reverse }}
-        <a class="post-card" href="{{ .RelPermalink }}">
-          {{ with .Params.card }}<img src="{{ strings.TrimPrefix "/" . | relURL }}" alt="">{{ end }}
-          <div>
-            <span class="post-card-kicker">{{ .Params.kicker }}</span>
-            <h2>{{ .Title }}</h2>
-            <p>{{ .Params.subtitle }}</p>
-            <span class="post-card-meta">{{ .Date.Format "02 Jan 2006" }} · {{ .ReadingTime }} min</span>
-          </div>
-        </a>
-      {{ end }}
-      </div>
+      <details class="archive" id="field-notes">
+        <summary><span>ARCHIVE</span> Earlier field notes <b>{{ len site.RegularPages }}</b></summary>
+        <div class="post-grid">
+        {{ range site.RegularPages.ByDate.Reverse }}
+          <a class="post-card" href="{{ .RelPermalink }}">
+            {{ with .Params.card }}<img src="{{ strings.TrimPrefix "/" . | relURL }}" alt="">{{ end }}
+            <div>
+              <span class="post-card-kicker">{{ .Params.kicker }}</span>
+              <h2>{{ .Title }}</h2>
+              <p>{{ .Params.subtitle }}</p>
+              <span class="post-card-meta">{{ .Date.Format "02 Jan 2006" }} · {{ .ReadingTime }} min</span>
+            </div>
+          </a>
+        {{ end }}
+        </div>
+      </details>
     </main>
   </div>
 </article>
