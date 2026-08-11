@@ -96,13 +96,13 @@ I sized the policy at 2.7 million parameters early, on the assumption that infer
 
 ## One equation
 
-Fix a strength target — say, beating a frozen reference checkpoint by a statistically significant margin. Let \(N\) be the number of agent-steps needed to get there and \(R\) the agent-steps per second the stack sustains. The thing you actually spend is
+Fix a strength target — say, beating a frozen reference checkpoint by a statistically significant margin. Let \\(N\\) be the number of agent-steps needed to get there and \\(R\\) the agent-steps per second the stack sustains. The thing you actually spend is
 
 <div class="formula">\(T = N / R\)<small>time to a fixed strength target = steps needed ÷ steps per second</small></div>
 
-which is trivial, and which I nonetheless kept reasoning about only one term at a time. Nearly every change I made moved both terms, in opposite directions. A richer opponent mix makes each sample more informative and makes every rollout slower. Reusing more of each rollout in the PPO update raises the work per sample and lowers the samples per second. Reward shaping, auxiliary losses, larger minibatches, augmentation, a bigger network: all of them trade \(N\) against \(R\).
+which is trivial, and which I nonetheless kept reasoning about only one term at a time. Nearly every change I made moved both terms, in opposite directions. A richer opponent mix makes each sample more informative and makes every rollout slower. Reusing more of each rollout in the PPO update raises the work per sample and lowers the samples per second. Reward shaping, auxiliary losses, larger minibatches, augmentation, a bigger network: all of them trade \\(N\\) against \\(R\\).
 
-So the acceptance test for an intervention is not "does it learn in fewer samples". Writing \(a = N'/N\) for the fraction of samples the new recipe needs and \(b = R'/R\) for the fraction of throughput it retains,
+So the acceptance test for an intervention is not "does it learn in fewer samples". Writing \\(a = N'/N\\) for the fraction of samples the new recipe needs and \\(b = R'/R\\) for the fraction of throughput it retains,
 
 <div class="formula">\(\dfrac{N'}{R'} < \dfrac{N}{R} \quad\Longleftrightarrow\quad \underbrace{1-a}_{\text{sample-efficiency gain}} > \underbrace{1-b}_{\text{throughput cost}}\)<small>the fractional reduction in samples has to exceed the fractional loss in throughput</small></div>
 
@@ -273,7 +273,7 @@ Draws are the failure mode of this ruleset. A policy that accumulates a large ec
 
 The penalty was never reaching the gradient. Truncation was being handled as a *reset* rather than as a terminal, in three separate places that were each individually reasonable:
 
-1. the value bootstrap read \(V(s_{t+1})\) from the state *after* the environment had reset, i.e. from a fresh board;
+1. the value bootstrap read \\(V(s_{t+1})\\) from the state *after* the environment had reset, i.e. from a fresh board;
 2. the GAE carry was cut at the episode boundary, so nothing propagated backwards past it;
 3. the final row of the rollout — the only row carrying the −1.5 target — was masked out of the loss as an incomplete transition.
 
@@ -380,13 +380,13 @@ Each of those is a thing you do somewhere in a PPO implementation. Together they
 
 ### 4.2 · Symmetry augmentation applied one step too late
 
-A Generals board has the eight symmetries of the square: four rotations and four reflections. That is free data augmentation, and the first implementation looked like this: collect a transition in the canonical orientation; inside each PPO epoch, draw a random \(g \in D_4\) and transform the stored observation, action and mask; then recompute the behaviour log-probability \(\log \pi_{\theta_{\text{old}}}(g \cdot a \mid g \cdot s)\) in the transformed frame.
+A Generals board has the eight symmetries of the square: four rotations and four reflections. That is free data augmentation, and the first implementation looked like this: collect a transition in the canonical orientation; inside each PPO epoch, draw a random \\(g \in D_4\\) and transform the stored observation, action and mask; then recompute the behaviour log-probability \\(\log \pi_{\theta_{\text{old}}}(g \cdot a \mid g \cdot s)\\) in the transformed frame.
 
 That last step is the one that looks careful and is the reason it is wrong. PPO's importance ratio
 
 <div class="formula">\(\rho_t(\theta) = \dfrac{\pi_\theta(a_t \mid s_t)}{\pi_{\theta_{\text{old}}}(a_t \mid s_t)}\)</div>
 
-is only an importance weight if \(a_t\) was *sampled* from \(\pi_{\theta_{\text{old}}}\) in state \(s_t\). The transformed action \(g \cdot a_t\) was never sampled by a policy looking at \(g \cdot s_t\); it was sampled by a policy looking at \(s_t\) and then rotated. Recomputing the denominator makes the arithmetic self-consistent and the estimator biased. As a bonus, a given sample could receive a different frame on each PPO pass, which adds gradient variance for nothing.
+is only an importance weight if \\(a_t\\) was *sampled* from \\(\pi_{\theta_{\text{old}}}\\) in state \\(s_t\\). The transformed action \\(g \cdot a_t\\) was never sampled by a policy looking at \\(g \cdot s_t\\); it was sampled by a policy looking at \\(s_t\\) and then rotated. Recomputing the denominator makes the arithmetic self-consistent and the estimator biased. As a bonus, a given sample could receive a different frame on each PPO pass, which adds gradient variance for nothing.
 
 <figure class="rep-fig">
   <p class="rep-fig-title">Figure 6 &nbsp;·&nbsp; Where the group action belongs</p>
@@ -474,11 +474,11 @@ Self-play win rate against yourself is always 50%, so every decision has to come
 
 <div class="formula">\(W - L \geq 1.65\sqrt{W+L}\)<small>the normal approximation to a fair-coin binomial over the decisive games; 1.65 is the one-sided 95% point</small></div>
 
-Under the null the standard deviation of \(W-L\) is \(\sqrt{W+L}\). Draws are excluded from the test and reported separately, because in this ruleset a draw is a distinct failure mode rather than half a win.
+Under the null the standard deviation of \\(W-L\\) is \\(\sqrt{W+L}\\). Draws are excluded from the test and reported separately, because in this ruleset a draw is a distinct failure mode rather than half a win.
 
 Two things about that gate cost me real time to learn.
 
-**First, small evaluations are not cheap, they are free of information.** I spent the first several days making calls from a 32-game greedy match against a random mover, because it ran in twenty seconds. The same checkpoint scored 97, 97 and 88 on three different boxes. At \(n=32\) the gate cannot resolve anything smaller than about 13 percentage points, which is larger than every effect I was trying to measure. It is a smoke test, and I had been reading it as a result.
+**First, small evaluations are not cheap, they are free of information.** I spent the first several days making calls from a 32-game greedy match against a random mover, because it ran in twenty seconds. The same checkpoint scored 97, 97 and 88 on three different boxes. At \\(n=32\\) the gate cannot resolve anything smaller than about 13 percentage points, which is larger than every effect I was trying to measure. It is a smoke test, and I had been reading it as a result.
 
 **Second, the eval scales sublinearly, so the cheap option was also the imprecise one for no reason.** A fixed 50–75 second compile dominates the small sizes:
 
@@ -652,7 +652,7 @@ The last generation is the cleanest illustration of the equation above, and I di
 
 `adv_top_frac = 0.50` trains PPO on the top half of the advantage distribution by magnitude instead of the top quarter — twice as many selected samples from each rollout. The three measurements were: throughput fell from **26.9k to 16.6k** agent-steps per second, a 38% cut; it matched the faster control while consuming roughly **38% fewer** environment interactions; and head to head over 2,048 games it went **1009 – 1030 – 2**, a tie.
 
-Put those in the equation. The fraction of samples still needed is \(a = N'/N \approx 0.62\), and the fraction of throughput retained is \(b = R'/R = 16.6/26.9 = 0.617\). The acceptance condition \(a < b\) is not satisfied — it holds *with equality*, to two significant figures. The sample-efficiency gain paid for the throughput loss exactly and bought nothing on top, so \(T'/T \approx 1\). The tie in the head-to-head is what the arithmetic predicted before the games were played.
+Put those in the equation. The fraction of samples still needed is \\(a = N'/N \approx 0.62\\), and the fraction of throughput retained is \\(b = R'/R = 16.6/26.9 = 0.617\\). The acceptance condition \\(a < b\\) is not satisfied — it holds *with equality*, to two significant figures. The sample-efficiency gain paid for the throughput loss exactly and bought nothing on top, so \\(T'/T \approx 1\\). The tie in the head-to-head is what the arithmetic predicted before the games were played.
 
 I promoted 0.50 regardless, using a tie-break I had declared in advance: the larger margin against the frozen parent, +111 against +80. In a competition with a deadline that is a reasonable way to settle a coin flip. As a claim about advantage filtering it is worth nothing, and I want to be explicit that **g08 is my operational champion, not a replicated result.**
 
