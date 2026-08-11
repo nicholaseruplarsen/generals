@@ -40,7 +40,7 @@ Those rules are the interesting part of the problem. The four numbers that actua
         <line x1="0" y1="0" x2="0" y2="6" stroke="var(--line)" stroke-width="1.6"/>
       </pattern>
       <marker id="ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M0 0 L10 5 L0 10 z" fill="#8f8f84"/>
+        <path d="M0 0 L10 5 L0 10 z" fill="var(--faint)"/>
       </marker>
     </defs>
     <!-- ---------- latency ---------- -->
@@ -50,7 +50,7 @@ Those rules are the interesting part of the problem. The four numbers that actua
     <text x="128" y="48" fill="var(--blue)" style="font-size:12.5px">20.7 ms used</text>
     <text x="852" y="48" text-anchor="end" class="mut" style="font-size:11px">150 ms limit</text>
     <line x1="860" y1="20" x2="860" y2="66" stroke="var(--muted)" stroke-width="1.5"/>
-    <line x1="123" y1="72" x2="856" y2="72" stroke="#8f8f84" stroke-width="1"
+    <line x1="123" y1="72" x2="856" y2="72" stroke="var(--faint)" stroke-width="1"
           marker-start="url(#ar1)" marker-end="url(#ar1)"/>
     <text x="490" y="88" text-anchor="middle" class="mut">86% of the latency budget unused</text>
     <!-- ---------- memory ---------- -->
@@ -126,9 +126,9 @@ This is arithmetic a first-year student can do, and I still got it wrong repeate
         <line x1="274" y1="30" x2="274" y2="350"/>
         <line x1="372" y1="30" x2="372" y2="350"/>
       </g>
-      <path d="M78 350 L470 30 L78 30 Z" fill="rgba(49,92,255,.07)"/>
-      <path d="M78 350 L470 30 L470 350 Z" fill="rgba(240,79,61,.07)"/>
-      <line x1="78" y1="350" x2="470" y2="30" stroke="#8f8f84" stroke-width="1.5" stroke-dasharray="5 4"/>
+      <path d="M78 350 L470 30 L78 30 Z" fill="var(--wash-gain)"/>
+      <path d="M78 350 L470 30 L470 350 Z" fill="var(--wash-cost)"/>
+      <line x1="78" y1="350" x2="470" y2="30" stroke="var(--faint)" stroke-width="1.5" stroke-dasharray="5 4"/>
       <text x="92" y="56" fill="var(--blue)" style="font-size:11px">worth doing</text>
       <text x="92" y="71" class="mut">time-to-target falls</text>
       <text x="462" y="152" text-anchor="end" fill="var(--red)" style="font-size:11px">not worth doing</text>
@@ -169,8 +169,8 @@ This is arithmetic a first-year student can do, and I still got it wrong repeate
       </g>
       <!-- draggable point -->
       <g id="w-drag" style="cursor:grab">
-        <line id="w-vline" x1="264.2" y1="350" x2="264.2" y2="198" stroke="#8f8f84" stroke-width="1" stroke-dasharray="3 3"/>
-        <line id="w-hline" x1="78" y1="198" x2="264.2" y2="198" stroke="#8f8f84" stroke-width="1" stroke-dasharray="3 3"/>
+        <line id="w-vline" x1="264.2" y1="350" x2="264.2" y2="198" stroke="var(--faint)" stroke-width="1" stroke-dasharray="3 3"/>
+        <line id="w-hline" x1="78" y1="198" x2="264.2" y2="198" stroke="var(--faint)" stroke-width="1" stroke-dasharray="3 3"/>
         <circle id="w-pt" cx="264.2" cy="198" r="9" fill="var(--blue)" stroke="var(--paper)" stroke-width="2.5"/>
       </g>
       <rect id="w-hit" x="78" y="30" width="392" height="320" fill="transparent" style="cursor:crosshair"/>
@@ -292,7 +292,7 @@ Each of those is a thing you do somewhere in a PPO implementation. Together they
       </marker>
     </defs>
     <!-- ============ BEFORE ============ -->
-    <g color="#8f8f84">
+    <g color="var(--faint)">
       <text class="ttl" x="0" y="12" fill="var(--red)">BEFORE — the penalty never reaches the gradient</text>
       <!-- rollout strip -->
       <text x="245" y="36" text-anchor="middle" class="mut">turn 1200</text>
@@ -301,10 +301,10 @@ Each of those is a thing you do somewhere in a PPO implementation. Together they
       <rect x="94"  y="44" width="52" height="34" fill="var(--paper-2)" stroke="var(--line)"/>
       <rect x="148" y="44" width="52" height="34" fill="var(--paper-2)" stroke="var(--line)"/>
       <text x="118" y="66" text-anchor="middle" class="mut">t · · ·</text>
-      <rect x="202" y="44" width="86" height="34" fill="rgba(240,79,61,.09)"
+      <rect x="202" y="44" width="86" height="34" fill="var(--wash-cost-2)"
             stroke="var(--red)" stroke-dasharray="4 3"/>
       <text x="245" y="66" text-anchor="middle" fill="var(--red)" style="font-size:11px">r = −1.5</text>
-      <line x1="295" y1="30" x2="295" y2="94" stroke="#8f8f84" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <line x1="295" y1="30" x2="295" y2="94" stroke="var(--faint)" stroke-width="1.5" stroke-dasharray="3 3"/>
       <rect x="302" y="44" width="52" height="34" fill="var(--paper-2)" stroke="var(--line)"/>
       <text x="328" y="66" text-anchor="middle" class="mut">new</text>
       <!-- fault 1: bootstrap crosses the reset -->
@@ -330,7 +330,7 @@ Each of those is a thing you do somewhere in a PPO implementation. Together they
     </g>
     <line x1="0" y1="228" x2="1080" y2="228" stroke="var(--line)"/>
     <!-- ============ AFTER ============ -->
-    <g transform="translate(0,252)" color="#8f8f84">
+    <g transform="translate(0,252)" color="var(--faint)">
       <text class="ttl" x="0" y="12" fill="var(--blue)">AFTER — truncation is a true terminal</text>
       <text x="245" y="36" text-anchor="middle" class="mut">turn 1200</text>
       <text x="328" y="36" text-anchor="middle" class="mut">reset</text>
@@ -338,9 +338,9 @@ Each of those is a thing you do somewhere in a PPO implementation. Together they
       <rect x="94"  y="44" width="52" height="34" fill="var(--paper-2)" stroke="var(--line)"/>
       <rect x="148" y="44" width="52" height="34" fill="var(--paper-2)" stroke="var(--line)"/>
       <text x="118" y="66" text-anchor="middle" class="mut">t · · ·</text>
-      <rect x="202" y="44" width="86" height="34" fill="rgba(49,92,255,.07)" stroke="var(--blue)" stroke-width="1.5"/>
+      <rect x="202" y="44" width="86" height="34" fill="var(--wash-gain)" stroke="var(--blue)" stroke-width="1.5"/>
       <text x="245" y="66" text-anchor="middle" fill="var(--blue)" style="font-size:11px">r = −1.5</text>
-      <line x1="295" y1="30" x2="295" y2="94" stroke="#8f8f84" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <line x1="295" y1="30" x2="295" y2="94" stroke="var(--faint)" stroke-width="1.5" stroke-dasharray="3 3"/>
       <rect x="302" y="44" width="52" height="34" fill="var(--paper-2)" stroke="var(--line)"/>
       <text x="328" y="66" text-anchor="middle" class="mut">new</text>
       <!-- 1: no bootstrap -->
@@ -353,7 +353,7 @@ Each of those is a thing you do somewhere in a PPO implementation. Together they
             marker-end="url(#ar2)" color="var(--blue)"/>
       <text x="400" y="136" fill="var(--blue)" style="font-size:11px">2 · the −1.5 propagates back through GAE</text>
       <!-- 3: row kept -->
-      <rect x="202" y="152" width="86" height="26" fill="rgba(49,92,255,.07)" stroke="var(--blue)"/>
+      <rect x="202" y="152" width="86" height="26" fill="var(--wash-gain)" stroke="var(--blue)"/>
       <text x="245" y="169" text-anchor="middle" fill="var(--blue)" style="font-size:10px">KEPT</text>
       <text x="400" y="169" fill="var(--blue)" style="font-size:11px">3 · the row stays in the loss</text>
       <text x="0" y="200" fill="var(--blue)" style="font-size:12px">held stable to iteration 1,700 · scripted 97–100% W · self-play draws 6–9%</text>
@@ -400,7 +400,7 @@ is only an importance weight if \(a_t\) was *sampled* from \(\pi_{\theta_{\text{
     </defs>
     <!-- BROKEN -->
     <text class="ttl" x="0" y="12" fill="var(--red)">BEFORE — g applied to stored samples</text>
-    <g transform="translate(0,32)" color="#8f8f84">
+    <g transform="translate(0,32)" color="var(--faint)">
       <rect x="0" y="0" width="92" height="36" fill="var(--paper-2)" stroke="var(--line)"/>
       <text x="46" y="22" text-anchor="middle">env</text>
       <line x1="92" y1="18" x2="126" y2="18" stroke="currentColor" marker-end="url(#ar3)"/>
@@ -411,7 +411,7 @@ is only an importance weight if \(a_t\) was *sampled* from \(\pi_{\theta_{\text{
       <text x="336" y="22" text-anchor="middle">buffer</text>
       <!-- the misplaced transform -->
       <line x1="388" y1="18" x2="422" y2="18" stroke="currentColor" marker-end="url(#ar3)"/>
-      <rect x="424" y="-14" width="152" height="64" fill="rgba(240,79,61,.09)" stroke="var(--red)" stroke-width="1.5"/>
+      <rect x="424" y="-14" width="152" height="64" fill="var(--wash-cost-2)" stroke="var(--red)" stroke-width="1.5"/>
       <text x="500" y="8" text-anchor="middle" fill="var(--red)" style="font-size:11px">PPO epoch</text>
       <text x="500" y="26" text-anchor="middle" fill="var(--red)" style="font-size:11px">apply g · recompute</text>
       <text x="500" y="42" text-anchor="middle" fill="var(--red)" style="font-size:11px">log π_old(g·a | g·s)</text>
@@ -420,11 +420,11 @@ is only an importance weight if \(a_t\) was *sampled* from \(\pi_{\theta_{\text{
     </g>
     <!-- AFTER -->
     <text class="ttl" x="0" y="196" fill="var(--blue)">AFTER — g drawn per episode, before inference</text>
-    <g transform="translate(0,256)" color="#8f8f84">
+    <g transform="translate(0,256)" color="var(--faint)">
       <rect x="0" y="0" width="92" height="36" fill="var(--paper-2)" stroke="var(--line)"/>
       <text x="46" y="22" text-anchor="middle">env</text>
       <line x1="92" y1="18" x2="126" y2="18" stroke="currentColor" marker-end="url(#ar3)"/>
-      <rect x="128" y="-14" width="120" height="64" fill="rgba(49,92,255,.07)" stroke="var(--blue)" stroke-width="1.5"/>
+      <rect x="128" y="-14" width="120" height="64" fill="var(--wash-gain)" stroke="var(--blue)" stroke-width="1.5"/>
       <text x="188" y="6" text-anchor="middle" fill="var(--blue)" style="font-size:11px">apply g to</text>
       <text x="188" y="24" text-anchor="middle" fill="var(--blue)" style="font-size:11px">obs + legal mask</text>
       <text x="188" y="42" text-anchor="middle" fill="var(--blue)" style="font-size:10px">one g per episode</text>
@@ -540,7 +540,7 @@ With roughly 48 hours left I stopped redesigning the network. The 2.72 M CNN was
     <span><i style="background:var(--blue)"></i>treatment vs frozen parent</span>
     <span><i style="background:var(--red)"></i>control vs frozen parent</span>
     <span><i style="background:var(--ink);border-radius:50%"></i>treatment vs control — the causal statistic</span>
-    <span><i style="background:transparent;border-left:2px dashed #8f8f84;width:2px;border-radius:0"></i>promotion bar, ≈74</span>
+    <span><i style="background:transparent;border-left:2px dashed var(--faint);width:2px;border-radius:0"></i>promotion bar, ≈74</span>
   </div>
   <div class="rep-scroll">
   <svg viewBox="0 0 1080 340" role="img"
@@ -558,7 +558,7 @@ With roughly 48 hours left I stopped redesigning the network. The 2.72 M CNN was
     <text x="855" y="318" text-anchor="middle" class="mut">+300</text>
     <text x="670" y="336" text-anchor="middle" class="mut">margin  W − L  (2,048 games)</text>
     <!-- promotion bar at +74 -> x = 300 + 74*1.85 = 436.9 -->
-    <line x1="436.9" y1="20" x2="436.9" y2="300" stroke="#8f8f84" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <line x1="436.9" y1="20" x2="436.9" y2="300" stroke="var(--faint)" stroke-width="1.5" stroke-dasharray="5 4"/>
     <text x="436.9" y="14" text-anchor="middle" class="mut">promotion bar</text>
     <!-- rows -->
     <!-- g03 -->
@@ -773,7 +773,7 @@ Most of what I tried did not work, which is the normal ratio and worth writing d
       <line x1="830"   y1="40" x2="830"   y2="216"/>
       <line x1="943.3" y1="40" x2="943.3" y2="216"/>
     </g>
-    <line x1="376.7" y1="34" x2="376.7" y2="216" stroke="#8f8f84" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <line x1="376.7" y1="34" x2="376.7" y2="216" stroke="var(--faint)" stroke-width="1.5" stroke-dasharray="4 4"/>
     <text x="376.7" y="28" text-anchor="middle" class="mut">no change</text>
     <line class="axis" x1="320" y1="216" x2="1000" y2="216"/>
     <text x="376.7" y="232" text-anchor="middle" class="mut">0</text>
@@ -995,7 +995,6 @@ The competition result was 9th of 114, on a policy that moved in 20 ms against a
   <p>Figures 9 and 10 plot only measured endpoints; the connecting segments carry no claim about the path between them. The <code>adv_top_frac</code> sample-efficiency figure of ≈38% is derived from matched-wall-clock environment interactions, not from a separate steps-to-gate measurement, and is the weakest number in the section it appears in.</p>
 </div>
 
-<a class="companion-link" href="{{< relref "posts/policy-workspace" >}}"><span>INTERACTIVE METHODS NOTE</span><strong>Inside a Small Policy</strong><span class="companion-copy">Explore a layer-by-concept lens, the geometry of global broadcast, and a causal intervention workbench.</span><b>Open companion article →</b></a>
 
 <script>
 (function () {

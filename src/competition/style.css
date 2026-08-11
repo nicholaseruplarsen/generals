@@ -21,6 +21,18 @@
   --font-mono: "Competition Mono", "JetBrains Mono", ui-monospace, "SF Mono", monospace;
 }
 
+:root[data-theme="dark"] {
+  --bg: #0e1211;
+  --fg: #e8edea;
+  --muted: #a5b0ab;
+  --neutral-tile: #2a322f;
+  --neutral-castle-tile: #4a534f;
+  --mountain-tile: #39423e;
+  --fog-tile: #1b2220;
+  --fog-mountain-tile: #2b3532;
+  --border: rgba(255, 255, 255, .14);
+}
+
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html, body { min-height: 100%; margin: 0; background: var(--bg); color: var(--fg); }
@@ -28,7 +40,7 @@ body { font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
 button, select, input { font: inherit; }
 button { cursor: pointer; }
 
-.competition-shell { min-height: 100vh; background: #fff; }
+.competition-shell { min-height: 100vh; background: var(--bg); }
 .competition-header {
   min-height: 64px;
   display: grid;
@@ -171,7 +183,7 @@ button { cursor: pointer; }
   font: 700 24px/1 var(--font-mono);
 }
 
-.end-screen { position: absolute; inset: 0; z-index: 10; display: grid; place-content: center; justify-items: center; background: rgba(255,255,255,.84); backdrop-filter: blur(2px); }
+.end-screen { position: absolute; inset: 0; z-index: 10; display: grid; place-content: center; justify-items: center; background: color-mix(in srgb, var(--bg) 84%, transparent); backdrop-filter: blur(2px); }
 .end-screen strong { color: var(--fg); font: 700 28px/1 var(--font-mono); letter-spacing: .06em; }
 .end-screen span { margin-top: 9px; color: var(--muted); font: 500 10px/1.4 var(--font-mono); }
 .end-screen button { margin-top: 20px; padding: 8px 15px; border: 1px solid var(--fg); background: var(--fg); color: var(--bg); font: 600 9px/1 var(--font-mono); letter-spacing: .1em; }
@@ -212,7 +224,7 @@ button { cursor: pointer; }
 .is-embedded,
 html:has(.is-embedded),
 body:has(.is-embedded),
-.is-embedded .competition-shell { min-height: 0; background: #f4f1e8; }
+.is-embedded .competition-shell { min-height: 0; background: var(--bg); }
 .is-embedded .competition-header { min-height: 54px; padding-inline: 16px; }
 .is-embedded .competition-main { width: min(560px, calc(100% - 24px)); padding: 24px 0 18px; }
 .is-embedded .replay-viewer-meta,

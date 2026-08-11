@@ -39,9 +39,9 @@
     justify-content: space-between;
     gap: 24px;
     padding: 0 0 14px;
-    border-bottom: 1px solid #b9b8b1;
+    border-bottom: 1px solid var(--line);
   }
-  .generals-game .gg-heading span { color: #315cff; font: 500 10px/1.4 var(--mono, monospace); letter-spacing: .1em; }
+  .generals-game .gg-heading span { color: var(--blue); font: 500 10px/1.4 var(--mono, monospace); letter-spacing: .1em; }
   .generals-game .gg-heading strong { font: 400 20px/1.25 var(--serif, serif); }
   .generals-game .gg-frame {
     background: transparent;
@@ -60,11 +60,11 @@
     gap: 14px;
     margin: 0;
     padding: 13px 0 0;
-    border-top: 1px solid #b9b8b1;
-    color: #777872;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
     font: 400 10px/1.5 var(--mono, monospace);
   }
-  .generals-game .gg-caption b { color: #258d4e; font-weight: 500; }
+  .generals-game .gg-caption b { color: var(--blue); font-weight: 500; }
   .generals-game .gg-actions {
     display: flex;
     align-items: center;
@@ -76,13 +76,13 @@
     background: none;
     border: 0;
     padding: 0;
-    color: #555;
+    color: var(--muted);
     text-decoration: none;
     cursor: pointer;
     font: inherit;
   }
   .generals-game .gg-caption a:hover,
-  .generals-game .gg-caption button:hover { color: #315cff; }
+  .generals-game .gg-caption button:hover { color: var(--blue); }
   @media (max-width: 980px) {
     .generals-game { left: 50%; transform: translateX(-50%); }
   }
