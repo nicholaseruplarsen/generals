@@ -78,7 +78,7 @@ h1, h2, h3 { text-wrap: balance; }
 .figure-wide { width: min(1240px, calc(100% - 40px)); margin: 0 auto 90px; }
 .hero { background: var(--dark); border-radius: 4px; overflow: hidden; box-shadow: 0 22px 80px rgba(31,34,43,.18); }
 
-.article-shell { max-width: 1216px; margin: 0 auto; padding: 0 24px 120px; display: grid; grid-template-columns: 180px minmax(0,760px) 180px; gap: 48px; }
+.article-shell { max-width: 1400px; margin: 0 auto; padding: 0 24px 120px; display: grid; grid-template-columns: 180px minmax(0,980px) 1fr; gap: 48px; }
 .contents { position: sticky; top: 104px; align-self: start; max-height: calc(100vh - 130px); overflow: auto; padding-top: 8px; }
 .contents-label { font: 500 10px/1 var(--mono); letter-spacing: .14em; color: var(--muted); padding-bottom: 14px; border-bottom: 1px solid var(--line); }
 .contents nav > ul { padding: 0; margin: 14px 0; list-style: none; }
@@ -559,4 +559,13 @@ td:first-child, th:first-child { padding-left: 0; }
 @media (max-width: 900px) {
   .rep-widget { grid-template-columns: 1fr; }
   .article-body .rep-fig { padding: 18px 16px 14px; }
+}
+
+/* One shared column: prose, figure boxes and the game embed are all the width
+   of .article-body, so they stay flush with each other at every viewport. */
+.article-body .rep-fig { width: 100%; }
+.article-body .rep-fig figcaption { max-width: none; }
+.article-body .generals-game { position: static; left: auto; transform: none; width: 100%; }
+@media (max-width: 680px) {
+  .article-body .generals-game { width: 100%; left: auto; transform: none; }
 }
